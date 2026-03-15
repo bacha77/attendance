@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { HashRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
 import { LayoutDashboard, Users, BookOpen, UserCheck, BarChart3, MessageSquare, Menu, X } from 'lucide-react';
 import Dashboard from './pages/Dashboard';
 import Classes from './pages/Classes';
@@ -16,7 +16,7 @@ const App: React.FC = () => {
 
   return (
     <AppProvider>
-      <Router>
+      <Router basename="/attendance">
         <div className="app-layout">
           {/* Mobile Overlay */}
           <div
@@ -27,7 +27,7 @@ const App: React.FC = () => {
 
           <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
             <div className="brand" style={{ gap: '0.75rem' }}>
-              <img src="logo.png" alt="Church Logo" style={{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'contain' }} />
+              <img src={`${import.meta.env.BASE_URL}logo.png`} alt="Church Logo" style={{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'contain' }} />
               <div style={{ display: 'flex', flexDirection: 'column', lineHeight: '1.2' }}>
                 <span style={{ color: 'white', fontSize: '0.9rem', fontWeight: 700, letterSpacing: '0.05em' }}>PHILADELPHIE</span>
                 <span style={{ color: 'var(--primary-color)', fontSize: '0.75rem', fontWeight: 600 }}>SDA CHURCH</span>
