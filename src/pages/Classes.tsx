@@ -122,7 +122,12 @@ const Classes: React.FC = () => {
                 {filteredClasses.map(c => {
                     const classStudents = students.filter(s => s.classId === c.id);
                     return (
-                        <div key={c.id} className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div
+                            key={c.id}
+                            className="card interactive-card"
+                            style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+                            onClick={() => navigate(`/attendance/${c.id}`)}
+                        >
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                 <div>
                                     <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -131,8 +136,8 @@ const Classes: React.FC = () => {
                                     <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{c.ageGroup} | {c.room}</p>
                                 </div>
                                 <div style={{ display: 'flex', gap: '0.25rem' }}>
-                                    <button className="btn-icon" onClick={() => handleEditClass(c)}><Settings size={18} /></button>
-                                    <button className="btn-icon" style={{ color: 'var(--danger-color)' }} onClick={() => removeClass(c.id)}>
+                                    <button className="btn-icon" onClick={(e) => { e.stopPropagation(); handleEditClass(c); }}><Settings size={18} /></button>
+                                    <button className="btn-icon" style={{ color: 'var(--danger-color)' }} onClick={(e) => { e.stopPropagation(); removeClass(c.id); }}>
                                         <Trash2 size={18} />
                                     </button>
                                 </div>
@@ -147,7 +152,7 @@ const Classes: React.FC = () => {
                                     <button
                                         className="btn btn-secondary"
                                         style={{ padding: '0.4rem', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(16, 185, 129, 0.1)', color: 'var(--success-color)', border: 'none' }}
-                                        onClick={() => navigate(`/attendance/${c.id}`)}
+                                        onClick={(e) => { e.stopPropagation(); navigate(`/attendance/${c.id}`); }}
                                         title="Take Attendance"
                                     >
                                         <CheckSquare size={18} />
@@ -155,7 +160,7 @@ const Classes: React.FC = () => {
                                     <button
                                         className="btn btn-secondary"
                                         style={{ padding: '0.4rem', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(245, 158, 11, 0.1)', color: 'var(--warning-color)', border: 'none' }}
-                                        onClick={() => navigate(`/offerings/${c.id}`)}
+                                        onClick={(e) => { e.stopPropagation(); navigate(`/offerings/${c.id}`); }}
                                         title="Collect Offering"
                                     >
                                         <DollarSign size={18} />
@@ -163,7 +168,7 @@ const Classes: React.FC = () => {
                                     <button
                                         className="btn btn-secondary"
                                         style={{ padding: '0.4rem 0.75rem', fontSize: '0.75rem', fontWeight: 600 }}
-                                        onClick={() => { setSelectedClassId(c.id); setStudentModalOpen(true); }}
+                                        onClick={(e) => { e.stopPropagation(); setSelectedClassId(c.id); setStudentModalOpen(true); }}
                                     >
                                         Enroll
                                     </button>
