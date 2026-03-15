@@ -58,6 +58,7 @@ export const initialClasses: Class[] = [
   { id: 'c1', name: 'Beginner', ageGroup: '1-3 years old', room: 'Room 101' },
   { id: 'c2', name: 'Kindergarten', ageGroup: '4-6 years old', room: 'Room 102' },
   { id: 'c3', name: 'Primary', ageGroup: '7-9 years old', room: 'Room 103' },
+  { id: 'c10', name: 'Junior', ageGroup: '10-12 years', room: 'Room 105' },
   { id: 'c4', name: 'Teen', ageGroup: '13-14 years', room: 'Room 104' },
   { id: 'c5', name: 'Youth', ageGroup: '15-18 years', room: 'Room 201' },
   { id: 'c6', name: 'Adults 1', ageGroup: 'Adults', room: 'Main Sanctuary A' },
