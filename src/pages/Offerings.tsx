@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
-import { DollarSign, Calendar, Save, CheckCircle } from 'lucide-react';
+import { DollarSign, Calendar, Save, CheckCircle, ArrowLeft } from 'lucide-react';
 
 const Offerings: React.FC = () => {
     const { classes, recordOffering, offerings } = useAppContext();
+    const { classId } = useParams<{ classId: string }>();
+    const navigate = useNavigate();
     const [date, setDate] = useState(() => {
         const d = new Date();
         const day = d.getDay();
@@ -15,16 +18,18 @@ const Offerings: React.FC = () => {
     const [classAmounts, setClassAmounts] = useState<{ [key: string]: string }>({});
     const [savedClasses, setSavedClasses] = useState<string[]>([]);
 
+    const activeClasses = classId ? classes.filter(c => c.id === classId) : classes;
+
     // Load existing offerings if any
-    React.useEffect(() => {
+    useEffect(() => {
         const initialAmounts: { [key: string]: string } = {};
-        classes.forEach(c => {
+        activeClasses.forEach(c => {
             const existing = offerings.find(o => o.classId === c.id && o.date === date);
             initialAmounts[c.id] = existing ? existing.amount.toString() : '';
         });
         setClassAmounts(initialAmounts);
         setSavedClasses([]);
-    }, [date, classes, offerings]);
+    }, [date, activeClasses.length, offerings]);
 
     const handleAmountChange = (classId: string, value: string) => {
         // Allow only numbers and decimal
@@ -41,20 +46,27 @@ const Offerings: React.FC = () => {
     };
 
     const handleSaveAll = () => {
-        classes.forEach(c => {
+        activeClasses.forEach(c => {
             const amount = parseFloat(classAmounts[c.id] || '0');
             recordOffering(c.id, date, amount);
         });
-        setSavedClasses(classes.map(c => c.id));
-        alert('All offerings saved successfully!');
+        setSavedClasses(activeClasses.map(c => c.id));
+        alert('Offerings saved successfully!');
     };
 
     return (
         <div className="animate-fade-in">
             <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem' }}>
-                <div>
-                    <h2 style={{ fontSize: '1.75rem', fontWeight: 600 }}>Class Offerings</h2>
-                    <p style={{ color: 'var(--text-muted)' }}>Collect and record money for each individual class.</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    {classId && (
+                        <button className="btn-icon" onClick={() => navigate(-1)} style={{ backgroundColor: 'var(--surface-hover)', borderRadius: '50%' }}>
+                            <ArrowLeft size={20} />
+                        </button>
+                    )}
+                    <div>
+                        <h2 style={{ fontSize: '1.75rem', fontWeight: 600 }}>{classId ? `${activeClasses[0]?.name} Offering` : 'Class Offerings'}</h2>
+                        <p style={{ color: 'var(--text-muted)' }}>{classId ? `Record money for the ${activeClasses[0]?.name} class.` : 'Collect and record money for each individual class.'}</p>
+                    </div>
                 </div>
 
                 <div className="card" style={{ padding: '0.75rem 1rem', display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: 0 }}>
@@ -80,7 +92,7 @@ const Offerings: React.FC = () => {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-                {classes.map(cls => (
+                {activeClasses.map(cls => (
                     <div key={cls.id} className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', borderTop: '4px solid var(--primary-color)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                             <div>

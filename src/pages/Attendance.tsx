@@ -1,15 +1,26 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
-import { CheckCircle, XCircle, Clock, Calendar, Search } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, Calendar, Search, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Attendance: React.FC = () => {
     const { classes, students, recordAttendance } = useAppContext();
 
-    const [selectedClassId, setSelectedClassId] = useState(classes[0]?.id || '');
+    const { classId } = useParams<{ classId: string }>();
+    const navigate = useNavigate();
+
+    const [selectedClassId, setSelectedClassId] = useState(classId || classes[0]?.id || '');
+
+    useEffect(() => {
+        if (classId) {
+            setSelectedClassId(classId);
+        }
+    }, [classId]);
     const [date, setDate] = useState(() => {
         const d = new Date();
         const day = d.getDay();
-        const offset = (day + 1) % 7; 
+        const offset = (day + 1) % 7;
         d.setDate(d.getDate() - offset);
         return d.toISOString().split('T')[0];
     });
@@ -66,50 +77,87 @@ const Attendance: React.FC = () => {
 
     return (
         <div className="animate-fade-in">
-            <div style={{ marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: '1.75rem', fontWeight: 600 }}>Fast Attendance Entry</h2>
-                <p style={{ color: 'var(--text-muted)' }}>Quickly log today's attendance for your Sabbath school class.</p>
-            </div>
-
-            <div className="card" style={{ marginBottom: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
-                <div className="form-group" style={{ marginBottom: 0, flex: 1, minWidth: '200px' }}>
-                    <label className="form-label">Select Class</label>
-                    <select
-                        className="form-control"
-                        value={selectedClassId}
-                        onChange={e => setSelectedClassId(e.target.value)}
-                        style={{ appearance: 'none', backgroundColor: 'var(--bg-color)' }}
-                    >
-                        {classes.map(c => (
-                            <option key={c.id} value={c.id}>{c.name} ({c.ageGroup})</option>
-                        ))}
-                    </select>
-                </div>
-
-                <div className="form-group" style={{ marginBottom: 0, flex: 1, minWidth: '200px' }}>
-                    <label className="form-label" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                        <Calendar size={16} /> Date
-                    </label>
-                    <input
-                        type="date"
-                        className="form-control"
-                        value={date}
-                        onChange={e => {
-                            // Ensure only Saturdays can be selected
-                            const d = new Date(e.target.value);
-                            const day = d.getUTCDay();
-                            if (day !== 6) {
-                                alert('Please select a Sabbath (Saturday) for attendance records.');
-                                return;
-                            }
-                            setDate(e.target.value);
-                        }}
-                        max={new Date().toISOString().split('T')[0]} // up to today
-                        style={{ cursor: 'pointer' }}
-                    />
-                    <small style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.25rem', display: 'block' }}>Only Saturdays are allowed</small>
+            <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                {classId && (
+                    <button className="btn-icon" onClick={() => navigate(-1)} style={{ backgroundColor: 'var(--surface-hover)', borderRadius: '50%' }}>
+                        <ArrowLeft size={20} />
+                    </button>
+                )}
+                <div>
+                    <h2 style={{ fontSize: '1.75rem', fontWeight: 600 }}>{classId ? `${classes.find(c => c.id === selectedClassId)?.name} Attendance` : 'Fast Attendance Entry'}</h2>
+                    <p style={{ color: 'var(--text-muted)' }}>{classId ? `Logging attendance for ${classes.find(c => c.id === selectedClassId)?.name} class.` : "Quickly log today's attendance for your Sabbath school class."}</p>
                 </div>
             </div>
+
+            {!classId && (
+                <div className="card" style={{ marginBottom: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+                    <div className="form-group" style={{ marginBottom: 0, flex: 1, minWidth: '200px' }}>
+                        <label className="form-label">Select Class</label>
+                        <select
+                            className="form-control"
+                            value={selectedClassId}
+                            onChange={e => setSelectedClassId(e.target.value)}
+                            style={{ appearance: 'none', backgroundColor: 'var(--bg-color)' }}
+                        >
+                            {classes.map(c => (
+                                <option key={c.id} value={c.id}>{c.name} ({c.ageGroup})</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="form-group" style={{ marginBottom: 0, flex: 1, minWidth: '200px' }}>
+                        <label className="form-label" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                            <Calendar size={16} /> Date
+                        </label>
+                        <input
+                            type="date"
+                            className="form-control"
+                            value={date}
+                            onChange={e => {
+                                // Ensure only Saturdays can be selected
+                                const d = new Date(e.target.value);
+                                const day = d.getUTCDay();
+                                if (day !== 6) {
+                                    alert('Please select a Sabbath (Saturday) for attendance records.');
+                                    return;
+                                }
+                                setDate(e.target.value);
+                            }}
+                            max={new Date().toISOString().split('T')[0]} // up to today
+                            style={{ cursor: 'pointer' }}
+                        />
+                        <small style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.25rem', display: 'block' }}>Only Saturdays are allowed</small>
+                    </div>
+                </div>
+            )}
+
+            {classId && (
+                <div className="card" style={{ marginBottom: '2rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                        <label className="form-label" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                            <Calendar size={16} /> Selected Date
+                        </label>
+                        <input
+                            type="date"
+                            className="form-control"
+                            value={date}
+                            onChange={e => {
+                                const d = new Date(e.target.value);
+                                const day = d.getUTCDay();
+                                if (day !== 6) {
+                                    alert('Please select a Sabbath (Saturday).');
+                                    return;
+                                }
+                                setDate(e.target.value);
+                            }}
+                            max={new Date().toISOString().split('T')[0]}
+                        />
+                    </div>
+                    <div style={{ marginLeft: 'auto' }}>
+                        <span className="badge badge-primary" style={{ padding: '0.5rem 1rem' }}>{classes.find(c => c.id === selectedClassId)?.room}</span>
+                    </div>
+                </div>
+            )}
 
             <div className="card">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
-import { Plus, Users, Settings, Search, Trash2 } from 'lucide-react';
+import { Plus, Users, Settings, Search, Trash2, CheckSquare, DollarSign } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Classes: React.FC = () => {
     const { classes, students, addClass, updateClass, removeClass, addStudent, updateStudent, removeStudent } = useAppContext();
+    const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const [rosterClassId, setRosterClassId] = useState<string | 'all'>('all');
 
@@ -141,9 +143,31 @@ const Classes: React.FC = () => {
                                     <Users size={18} />
                                     <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>{classStudents.length} Students</span>
                                 </div>
-                                <button className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => { setSelectedClassId(c.id); setStudentModalOpen(true); }}>
-                                    Enroll
-                                </button>
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <button
+                                        className="btn btn-secondary"
+                                        style={{ padding: '0.4rem', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(16, 185, 129, 0.1)', color: 'var(--success-color)', border: 'none' }}
+                                        onClick={() => navigate(`/attendance/${c.id}`)}
+                                        title="Take Attendance"
+                                    >
+                                        <CheckSquare size={18} />
+                                    </button>
+                                    <button
+                                        className="btn btn-secondary"
+                                        style={{ padding: '0.4rem', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(245, 158, 11, 0.1)', color: 'var(--warning-color)', border: 'none' }}
+                                        onClick={() => navigate(`/offerings/${c.id}`)}
+                                        title="Collect Offering"
+                                    >
+                                        <DollarSign size={18} />
+                                    </button>
+                                    <button
+                                        className="btn btn-secondary"
+                                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.75rem', fontWeight: 600 }}
+                                        onClick={() => { setSelectedClassId(c.id); setStudentModalOpen(true); }}
+                                    >
+                                        Enroll
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     );

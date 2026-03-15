@@ -92,9 +92,11 @@ const App: React.FC = () => {
                 <Route path="/classes" element={<Classes />} />
                 <Route path="/teachers" element={<Teachers />} />
                 <Route path="/attendance" element={<Attendance />} />
+                <Route path="/attendance/:classId" element={<Attendance />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/messaging" element={<Messaging />} />
                 <Route path="/offerings" element={<Offerings />} />
+                <Route path="/offerings/:classId" element={<Offerings />} />
               </Routes>
             </div>
           </main>
