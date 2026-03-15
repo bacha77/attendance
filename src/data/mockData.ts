@@ -45,6 +45,14 @@ export interface AttendanceRecord {
   recordedBy: string; // teacher id
 }
 
+export interface ClassOffering {
+  id: string;
+  classId: string;
+  date: string;
+  amount: number;
+}
+
+
 // 9 Default Classes
 export const initialClasses: Class[] = [
   { id: 'c1', name: 'Beginners', ageGroup: '0-2 Years', room: 'Room 101' },
@@ -119,3 +127,6 @@ export const generateMockAttendance = (students: Student[]): AttendanceRecord[] 
 };
 
 export const initialAttendance = generateMockAttendance(initialStudents);
+
+export const initialOfferings: ClassOffering[] = [];
+

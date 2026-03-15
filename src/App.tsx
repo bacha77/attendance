@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, BookOpen, UserCheck, BarChart3, MessageSquare, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Users, BookOpen, UserCheck, BarChart3, MessageSquare, Menu, X, DollarSign } from 'lucide-react';
 import Dashboard from './pages/Dashboard';
 import Classes from './pages/Classes';
 import Teachers from './pages/Teachers';
 import Attendance from './pages/Attendance';
 import Reports from './pages/Reports';
 import Messaging from './pages/Messaging';
+import Offerings from './pages/Offerings';
 import { AppProvider } from './context/AppContext';
 
 const App: React.FC = () => {
@@ -59,6 +60,10 @@ const App: React.FC = () => {
                 <MessageSquare size={20} />
                 Teachers Messaging
               </NavLink>
+              <NavLink to="/offerings" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => window.innerWidth <= 768 && setSidebarOpen(false)}>
+                <DollarSign size={20} />
+                Class Offerings
+              </NavLink>
             </nav>
 
             <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -89,6 +94,7 @@ const App: React.FC = () => {
                 <Route path="/attendance" element={<Attendance />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/messaging" element={<Messaging />} />
+                <Route path="/offerings" element={<Offerings />} />
               </Routes>
             </div>
           </main>

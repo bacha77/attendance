@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
-import { initialClasses, initialTeachers, initialStudents, initialAttendance } from '../data/mockData';
-import type { Class, Teacher, Student, AttendanceRecord } from '../data/mockData';
+import { initialClasses, initialTeachers, initialStudents, initialAttendance, initialOfferings } from '../data/mockData';
+import type { Class, Teacher, Student, AttendanceRecord, ClassOffering } from '../data/mockData';
 import { v4 as uuidv4 } from 'uuid';
 
 interface AppState {
@@ -9,6 +9,7 @@ interface AppState {
     teachers: Teacher[];
     students: Student[];
     attendance: AttendanceRecord[];
+    offerings: ClassOffering[];
     extraEmails: string[];
     addClass: (cls: Omit<Class, 'id'>) => void;
     updateClass: (id: string, cls: Partial<Class>) => void;
@@ -16,6 +17,7 @@ interface AppState {
     assignTeacher: (teacherId: string, classId: string) => void;
     unassignTeacher: (teacherId: string, classId: string) => void;
     recordAttendance: (classId: string, date: string, records: { studentId: string, status: 'present' | 'absent', sevenDaysStudy: boolean }[], recordedBy: string) => void;
+    recordOffering: (classId: string, date: string, amount: number) => void;
     addStudent: (student: Omit<Student, 'id'>) => void;
     updateStudent: (id: string, student: Partial<Student>) => void;
     removeStudent: (id: string) => void;
@@ -32,6 +34,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const [teachers, setTeachers] = useState<Teacher[]>(initialTeachers);
     const [students, setStudents] = useState<Student[]>(initialStudents);
     const [attendance, setAttendance] = useState<AttendanceRecord[]>(initialAttendance);
+    const [offerings, setOfferings] = useState<ClassOffering[]>(initialOfferings);
     const [extraEmails, setExtraEmails] = useState<string[]>(['pastor@philadelphie.org', 'clerk@philadelphie.org']);
 
     const addClass = (cls: Omit<Class, 'id'>) => {
@@ -91,6 +94,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setAttendance([...filtered, ...formattedRecords]);
     };
 
+    const recordOffering = (classId: string, date: string, amount: number) => {
+        const filtered = offerings.filter(o => !(o.classId === classId && o.date === date));
+        setOfferings([...filtered, { id: uuidv4(), classId, date, amount }]);
+    };
+
     const addStudent = (student: Omit<Student, 'id'>) => {
         setStudents([...students, { ...student, id: uuidv4() }]);
     };
@@ -132,8 +140,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     return (
         <AppContext.Provider value={{
-            classes, teachers, students, attendance, extraEmails,
-            addClass, updateClass, removeClass, assignTeacher, unassignTeacher, recordAttendance,
+            classes, teachers, students, attendance, offerings, extraEmails,
+            addClass, updateClass, removeClass, assignTeacher, unassignTeacher, recordAttendance, recordOffering,
             addStudent, updateStudent, removeStudent,
             addTeacher, updateTeacher, removeTeacher, updateExtraEmails
         }}>

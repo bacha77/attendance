@@ -7,7 +7,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 const Reports: React.FC = () => {
-    const { classes, students, attendance, extraEmails, updateExtraEmails } = useAppContext();
+    const { classes, students, attendance, offerings, extraEmails, updateExtraEmails } = useAppContext();
     const [reportType, setReportType] = useState('class'); // 'class' or 'student'
     const [isEditingEmails, setIsEditingEmails] = useState(false);
     const [tempEmails, setTempEmails] = useState(extraEmails.join(', '));
@@ -16,6 +16,7 @@ const Reports: React.FC = () => {
     const classData = classes.map(c => {
         const classStudents = students.filter(s => s.classId === c.id);
         const classAttendance = attendance.filter(a => a.classId === c.id);
+        const classOfferings = offerings.filter(o => o.classId === c.id);
 
         let presentCount = 0;
         let absentCount = 0;
@@ -27,12 +28,15 @@ const Reports: React.FC = () => {
             if (a.sevenDaysStudy) sevenDaysStudyCount++;
         });
 
+        const totalOffering = classOfferings.reduce((sum, o) => sum + o.amount, 0);
+
         return {
             name: c.name,
             present: presentCount,
             absent: absentCount,
             sevenDaysStudy: sevenDaysStudyCount,
-            totalStudents: classStudents.length
+            totalStudents: classStudents.length,
+            offering: totalOffering
         };
     });
 
@@ -47,11 +51,11 @@ const Reports: React.FC = () => {
         const doc = new jsPDF();
         doc.text("Sabbath School Attendance Report", 14, 15);
 
-        const tableColumn = ["Class Name", "Present", "Absent", "7 Days Study", "Total Enrolled"];
+        const tableColumn = ["Class Name", "Present", "Absent", "7 Days Study", "Total Enrolled", "Offering ($)"];
         const tableRows: any[] = [];
 
         classData.forEach(c => {
-            tableRows.push([c.name, c.present, c.absent, c.sevenDaysStudy, c.totalStudents]);
+            tableRows.push([c.name, c.present, c.absent, c.sevenDaysStudy, c.totalStudents, `$${c.offering.toFixed(2)}`]);
         });
 
         autoTable(doc, {
@@ -163,15 +167,24 @@ const Reports: React.FC = () => {
                                                 <stop offset="5%" stopColor="var(--primary-color)" stopOpacity={0.8} />
                                                 <stop offset="95%" stopColor="var(--primary-color)" stopOpacity={0.2} />
                                             </linearGradient>
+                                            <linearGradient id="colorOffering" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor="var(--warning-color)" stopOpacity={0.8} />
+                                                <stop offset="95%" stopColor="var(--warning-color)" stopOpacity={0.2} />
+                                            </linearGradient>
                                         </defs>
                                         <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
                                         <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
                                         <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
-                                        <Tooltip contentStyle={{ backgroundColor: 'var(--surface-color)', borderColor: 'var(--border-color)', borderRadius: 'var(--radius-sm)', color: 'var(--text-main)', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }} cursor={{ fill: 'var(--surface-hover)' }} />
+                                        <Tooltip
+                                            contentStyle={{ backgroundColor: 'var(--surface-color)', borderColor: 'var(--border-color)', borderRadius: 'var(--radius-sm)', color: 'var(--text-main)', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}
+                                            cursor={{ fill: 'var(--surface-hover)' }}
+                                            formatter={(value: any, name: any) => name === "Offering ($)" ? `$${value}` : value}
+                                        />
                                         <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
                                         <Bar dataKey="present" name="Present" fill="url(#colorPresent)" radius={[4, 4, 0, 0]} animationDuration={1500} animationEasing="ease-out" />
                                         <Bar dataKey="absent" name="Absent" fill="url(#colorAbsent)" radius={[4, 4, 0, 0]} animationDuration={1500} animationEasing="ease-out" />
                                         <Bar dataKey="sevenDaysStudy" name="7 Days Study" fill="url(#color7Days)" radius={[4, 4, 0, 0]} animationDuration={1500} animationEasing="ease-out" />
+                                        <Bar dataKey="offering" name="Offering ($)" fill="url(#colorOffering)" radius={[4, 4, 0, 0]} animationDuration={1500} animationEasing="ease-out" />
                                     </BarChart>
                                 </ResponsiveContainer>
                             </div>
