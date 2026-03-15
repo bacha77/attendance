@@ -55,11 +55,11 @@ export interface ClassOffering {
 
 // 9 Default Classes
 export const initialClasses: Class[] = [
-  { id: 'c1', name: 'Beginners', ageGroup: '0-2 Years', room: 'Room 101' },
-  { id: 'c2', name: 'Primary', ageGroup: '3-6 Years', room: 'Room 102' },
-  { id: 'c3', name: 'Juniors', ageGroup: '7-9 Years', room: 'Room 103' },
-  { id: 'c4', name: 'Youth', ageGroup: '10-14 Years', room: 'Room 104' },
-  { id: 'c5', name: 'Young Adults', ageGroup: 'Adults', room: 'Room 201' },
+  { id: 'c1', name: 'Beginner', ageGroup: '1-3 years old', room: 'Room 101' },
+  { id: 'c2', name: 'Kindergarten', ageGroup: '4-6 years old', room: 'Room 102' },
+  { id: 'c3', name: 'Primary', ageGroup: '7-9 years old', room: 'Room 103' },
+  { id: 'c4', name: 'Teen', ageGroup: '13-14 years', room: 'Room 104' },
+  { id: 'c5', name: 'Youth', ageGroup: '15-18 years', room: 'Room 201' },
   { id: 'c6', name: 'Adults 1', ageGroup: 'Adults', room: 'Main Sanctuary A' },
   { id: 'c7', name: 'Adults 2', ageGroup: 'Adults', room: 'Main Sanctuary B' },
   { id: 'c8', name: 'Adults 3', ageGroup: 'Adults', room: 'Fellowship Hall A' },
