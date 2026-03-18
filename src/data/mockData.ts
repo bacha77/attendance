@@ -62,10 +62,10 @@ export const initialClasses: Class[] = [
   { id: 'c10', name: 'Junior', ageGroup: '10-12 years', room: 'Room 105', lessonLink: 'https://junior.aliveinjesus.info/' },
   { id: 'c4', name: 'Teen', ageGroup: '13-14 years', room: 'Room 104', lessonLink: 'https://teen.aliveinjesus.info/' },
   { id: 'c5', name: 'Youth', ageGroup: '15-18 years', room: 'Room 201', lessonLink: 'https://youth.aliveinjesus.info/' },
-  { id: 'c6', name: 'Adults 1', ageGroup: 'Adults', room: 'Main Sanctuary A', lessonLink: 'https://www.sabbathschoolpersonalministries.org/study' },
-  { id: 'c7', name: 'Adults 2', ageGroup: 'Adults', room: 'Main Sanctuary B', lessonLink: 'https://www.sabbathschoolpersonalministries.org/study' },
-  { id: 'c8', name: 'Adults 3', ageGroup: 'Adults', room: 'Fellowship Hall A', lessonLink: 'https://www.sabbathschoolpersonalministries.org/study' },
-  { id: 'c9', name: 'Adults 4', ageGroup: 'Adults', room: 'Fellowship Hall B', lessonLink: 'https://www.sabbathschoolpersonalministries.org/study' },
+  { id: 'c6', name: 'Adults 1', ageGroup: 'Adults', room: 'Main Sanctuary A', lessonLink: 'https://www.ecolesabbat.org/' },
+  { id: 'c7', name: 'Adults 2', ageGroup: 'Adults', room: 'Main Sanctuary B', lessonLink: 'https://www.ecolesabbat.org/' },
+  { id: 'c8', name: 'Adults 3', ageGroup: 'Adults', room: 'Fellowship Hall A', lessonLink: 'https://www.ecolesabbat.org/' },
+  { id: 'c9', name: 'Adults 4', ageGroup: 'Adults', room: 'Fellowship Hall B', lessonLink: 'https://www.ecolesabbat.org/' },
 ];
 
 export const initialTeachers: Teacher[] = [

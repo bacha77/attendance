@@ -39,11 +39,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         const saved = localStorage.getItem('ss_classes');
         if (!saved) return initialClasses;
         const parsed: Class[] = JSON.parse(saved);
-        // Auto-upgrade: Merge lessonLink from initialClasses if it's new
+        // Auto-upgrade: Merge lessonLink from initialClasses if it's new or the old one needs updating
         return parsed.map(c => {
             const initial = initialClasses.find(ic => ic.id === c.id);
-            if (initial && initial.lessonLink && !c.lessonLink) {
-                return { ...c, lessonLink: initial.lessonLink };
+            if (initial && initial.lessonLink) {
+                // If the link is missing OR if it's an adult class (c6-c9) using the old link, update it
+                if (!c.lessonLink || (c.id.startsWith('c6') || c.id.startsWith('c7') || c.id.startsWith('c8') || c.id.startsWith('c9'))) {
+                    return { ...c, lessonLink: initial.lessonLink };
+                }
             }
             return c;
         });
