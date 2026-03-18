@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, UserX, UserCheck, TrendingUp, BookOpen, Clock, Gift, MessageSquare, ChevronRight, ExternalLink } from 'lucide-react';
+import { Users, UserX, UserCheck, TrendingUp, BookOpen, Clock, Gift, MessageSquare, ChevronRight, ExternalLink, Globe } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
 const Dashboard: React.FC = () => {
@@ -307,6 +307,24 @@ const Dashboard: React.FC = () => {
                             })}
                         </div>
                     )}
+                </div>
+
+                <div className="card" style={{ borderLeft: '4px solid var(--success-color)' }}>
+                    <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--success-color)' }}>
+                        <Globe size={20} /> Today's Mission Story
+                    </h3>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
+                        Inspire your class with the weekly global mission story (Mission Spotlight).
+                    </p>
+                    <a
+                        href="https://am.adventistmission.org/mission-spotlight?lang=fr"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-primary"
+                        style={{ textDecoration: 'none', display: 'flex', gap: '0.5rem', width: '100%', justifyContent: 'center', alignItems: 'center' }}
+                    >
+                        View Mission Spotlight <ExternalLink size={16} />
+                    </a>
                 </div>
             </div>
         </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppContext } from '../context/AppContext';
-import { BookOpen, ExternalLink, Info } from 'lucide-react';
+import { BookOpen, ExternalLink, Info, Globe } from 'lucide-react';
 
 const Lessons: React.FC = () => {
     const { classes } = useAppContext();
@@ -47,6 +47,26 @@ const Lessons: React.FC = () => {
                         </a>
                     </div>
                 ))}
+            </div>
+
+            {/* Global Session Resources */}
+            <div style={{ marginTop: '3rem', padding: '2rem', backgroundColor: 'var(--surface-color)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center', textAlign: 'center' }}>
+                <div style={{ width: '60px', height: '60px', backgroundColor: 'rgba(16, 185, 129, 0.1)', color: 'var(--success-color)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.5rem' }}>
+                    <Globe size={32} />
+                </div>
+                <h3 style={{ fontSize: '1.5rem', color: 'white' }}>Mission Spotlight</h3>
+                <p style={{ color: 'var(--text-muted)', maxWidth: '600px', margin: '0 auto' }}>
+                    Watch the weekly mission story from around the world. These stories inspire our global church family.
+                </p>
+                <a
+                    href="https://am.adventistmission.org/mission-spotlight?lang=fr"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-primary"
+                    style={{ textDecoration: 'none', display: 'flex', gap: '0.5rem', width: 'fit-content', marginTop: '1rem' }}
+                >
+                    View Mission Story (Français) <ExternalLink size={18} />
+                </a>
             </div>
 
             {/* Default Adult Resources if no specific link */}
