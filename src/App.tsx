@@ -8,8 +8,9 @@ import Reports from './pages/Reports';
 import Messaging from './pages/Messaging';
 import Offerings from './pages/Offerings';
 import AdminSettings from './pages/AdminSettings';
+import Lessons from './pages/Lessons';
 import { useAppContext } from './context/AppContext';
-import { LayoutDashboard, Users, BookOpen, UserCheck, BarChart3, MessageSquare, Menu, DollarSign, Settings, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Users, BookOpen, UserCheck, BarChart3, MessageSquare, Menu, DollarSign, Settings, ChevronRight, Library } from 'lucide-react';
 
 const App: React.FC = () => {
   const { currentUser, churchName, churchLogo } = useAppContext();
@@ -73,6 +74,11 @@ const App: React.FC = () => {
               Class Offerings
             </NavLink>
 
+            <NavLink to="/lessons" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
+              <Library size={20} />
+              Study Resources
+            </NavLink>
+
             {currentUser?.role === 'admin' && (
               <NavLink to="/admin" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)} style={{ borderTop: '1px solid var(--border-color)', marginTop: '0.5rem', paddingTop: '0.5rem' }}>
                 <Settings size={20} />
@@ -117,6 +123,7 @@ const App: React.FC = () => {
               <Route path="/offerings" element={<Offerings />} />
               <Route path="/offerings/:classId" element={<Offerings />} />
               <Route path="/admin" element={<AdminSettings />} />
+              <Route path="/lessons" element={<Lessons />} />
             </Routes>
           </div>
         </main>
