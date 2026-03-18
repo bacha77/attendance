@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import Classes from './pages/Classes';
@@ -12,17 +12,51 @@ import Lessons from './pages/Lessons';
 import { useAppContext } from './context/AppContext';
 import { LayoutDashboard, Users, BookOpen, UserCheck, BarChart3, MessageSquare, Menu, DollarSign, Settings, ChevronRight, Library } from 'lucide-react';
 
+const SplashScreen: React.FC<{ fade: boolean }> = ({ fade }) => {
+  const { churchName } = useAppContext();
+  return (
+    <div className={`splash-screen ${fade ? 'fade-out' : ''}`}>
+      <div className="splash-content">
+        <div className="splash-logo-container">
+          <div className="splash-logo-bg"></div>
+          <BookOpen size={48} className="splash-logo-icon" />
+        </div>
+        <div style={{ marginTop: '1rem' }}>
+          <h1 className="splash-text">
+            {churchName.includes('PHILADELPHIE') ? 'PHILADELPHIE' : churchName}
+          </h1>
+          <p className="splash-subtext">Sabbath School System</p>
+        </div>
+        <div className="splash-loader">
+          <div className="splash-loader-bar"></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const App: React.FC = () => {
   const { currentUser, churchName, churchLogo } = useAppContext();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
+  const [fadeSplash, setFadeSplash] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setFadeSplash(true);
+      setTimeout(() => setShowSplash(false), 800);
+    }, 2800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const toggleCollapse = () => setSidebarCollapsed(!sidebarCollapsed);
 
   return (
     <Router basename="/attendance">
+      {showSplash && <SplashScreen fade={fadeSplash} />}
       <div className="app-layout">
         {/* Mobile Overlay */}
         <div
