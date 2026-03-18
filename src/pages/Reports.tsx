@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { FileText, FileSpreadsheet, Award } from 'lucide-react';
+import { FileText, FileSpreadsheet, Award, Send } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -111,6 +111,26 @@ const Reports: React.FC = () => {
         doc.save(`Perfect_Attendance_${studentName.replace(/ /g, '_')}.pdf`);
     };
 
+    const handleSendWeeklyReport = () => {
+        const date = new Date().toLocaleDateString();
+        const summary = classData.map(c =>
+            `*${c.name}*\n- Present: ${c.present}\n- 7 Days Study: ${c.sevenDaysStudy}\n- Offering: $${c.offering.toFixed(2)}`
+        ).join('\n\n');
+
+        const fullText = `Sabbath School Report - ${date}\n\n${summary}\n\nTotal Recipients: ${extraEmails.join(', ')}`;
+
+        if (navigator && (navigator as any).share) {
+            (navigator as any).share({
+                title: 'Sabbath School Report',
+                text: fullText,
+            }).catch(() => {
+                window.location.href = `mailto:${extraEmails.join(',')}?subject=Sabbath School Report - ${date}&body=${encodeURIComponent(fullText)}`;
+            });
+        } else {
+            window.location.href = `mailto:${extraEmails.join(',')}?subject=Sabbath School Report - ${date}&body=${encodeURIComponent(fullText)}`;
+        }
+    };
+
     return (
         <div className="animate-fade-in">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
@@ -124,6 +144,9 @@ const Reports: React.FC = () => {
                     </button>
                     <button className="btn btn-primary" onClick={handleExportExcel}>
                         <FileSpreadsheet size={18} /> Export Excel
+                    </button>
+                    <button className="btn" style={{ backgroundColor: 'var(--success-color)', color: 'white', display: 'flex', gap: '0.5rem', alignItems: 'center' }} onClick={handleSendWeeklyReport}>
+                        <Send size={18} /> Send Weekly Report
                     </button>
                 </div>
             </div>

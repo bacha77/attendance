@@ -148,6 +148,20 @@ const AdminSettings: React.FC = () => {
                                 <div style={{ width: '16px', height: '16px', backgroundColor: '#94a3b8', borderRadius: '50%', position: 'absolute', left: '2px', top: '2px' }}></div>
                             </div>
                         </div>
+                        <div style={{ marginTop: '1rem', borderTop: '1px solid var(--border-color)', paddingTop: '1rem' }}>
+                            <button
+                                className="btn"
+                                style={{ width: '100%', backgroundColor: 'transparent', border: '1px solid var(--danger-color)', color: 'var(--danger-color)', fontSize: '0.8rem' }}
+                                onClick={() => {
+                                    if (window.confirm('WARNING: This will delete ALL attendance records, students, and teachers. This cannot be undone. Proceed?')) {
+                                        localStorage.clear();
+                                        window.location.reload();
+                                    }
+                                }}
+                            >
+                                Reset System Data (Clear Local Storage)
+                            </button>
+                        </div>
                     </div>
                 </div>
 
