@@ -125,6 +125,7 @@ const Dashboard: React.FC = () => {
                                     <th>Class Name</th>
                                     <th>Enrolled</th>
                                     <th>Room</th>
+                                    <th>Resource</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -134,6 +135,13 @@ const Dashboard: React.FC = () => {
                                         <td>{students.filter(s => s.classId === c.id).length}</td>
                                         <td>
                                             <span className="badge badge-primary">{c.room}</span>
+                                        </td>
+                                        <td>
+                                            {c.lessonLink ? (
+                                                <a href={c.lessonLink} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.7rem', color: 'var(--primary-color)', textDecoration: 'none', fontWeight: 600 }} onClick={e => e.stopPropagation()}>
+                                                    <ExternalLink size={12} /> Lesson
+                                                </a>
+                                            ) : '-'}
                                         </td>
                                     </tr>
                                 ))}

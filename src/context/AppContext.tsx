@@ -37,11 +37,27 @@ const AppContext = createContext<AppState | undefined>(undefined);
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [classes, setClasses] = useState<Class[]>(() => {
         const saved = localStorage.getItem('ss_classes');
-        return saved ? JSON.parse(saved) : initialClasses;
+        if (!saved) return initialClasses;
+        const parsed: Class[] = JSON.parse(saved);
+        // Auto-upgrade: Merge lessonLink from initialClasses if it's new
+        return parsed.map(c => {
+            const initial = initialClasses.find(ic => ic.id === c.id);
+            if (initial && initial.lessonLink && !c.lessonLink) {
+                return { ...c, lessonLink: initial.lessonLink };
+            }
+            return c;
+        });
     });
     const [teachers, setTeachers] = useState<Teacher[]>(() => {
         const saved = localStorage.getItem('ss_teachers');
-        return saved ? JSON.parse(saved) : initialTeachers;
+        if (!saved) return initialTeachers;
+        const parsed = JSON.parse(saved);
+        // Ensure initial teachers (like admin) have correct roles even if saved older version
+        return parsed.map((t: Teacher) => {
+            const initial = initialTeachers.find(it => it.id === t.id);
+            if (initial && initial.role !== t.role) return { ...t, role: initial.role };
+            return t;
+        });
     });
     const [students, setStudents] = useState<Student[]>(() => {
         const saved = localStorage.getItem('ss_students');
