@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, UserX, UserCheck, TrendingUp, BookOpen, Clock, Gift, MessageSquare, ChevronRight } from 'lucide-react';
+import { Users, UserX, UserCheck, TrendingUp, BookOpen, Clock, Gift, MessageSquare, ChevronRight, ExternalLink } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
 const Dashboard: React.FC = () => {
@@ -154,12 +154,27 @@ const Dashboard: React.FC = () => {
                     ) : (
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem' }}>
                             {teacherClasses.map(c => (
-                                <div key={c.id} style={{ padding: '1.25rem', backgroundColor: 'var(--surface-hover)', borderRadius: 'var(--radius-md)', textAlign: 'center', transition: 'transform 0.2s', cursor: 'pointer', border: '1px solid var(--border-color)' }}>
-                                    <div style={{ width: '40px', height: '40px', backgroundColor: 'var(--primary-color)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.75rem', color: 'white' }}>
-                                        <BookOpen size={20} />
+                                <div key={c.id} style={{ padding: '1.25rem', backgroundColor: 'var(--surface-hover)', borderRadius: 'var(--radius-md)', textAlign: 'center', transition: 'transform 0.2s', cursor: 'pointer', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                    <div>
+                                        <div style={{ width: '40px', height: '40px', backgroundColor: 'var(--primary-color)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.75rem', color: 'white' }}>
+                                            <BookOpen size={20} />
+                                        </div>
+                                        <h4 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'white', marginBottom: '0.25rem' }}>{c.name}</h4>
+                                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{c.room}</p>
                                     </div>
-                                    <h4 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'white', marginBottom: '0.25rem' }}>{c.name}</h4>
-                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{c.room}</p>
+
+                                    {c.lessonLink && (
+                                        <a
+                                            href={c.lessonLink}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="btn btn-secondary"
+                                            style={{ marginTop: '1rem', fontSize: '0.7rem', padding: '0.4rem 0.6rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', border: '1px solid rgba(99, 102, 241, 0.3)', color: 'var(--primary-color)' }}
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <ExternalLink size={12} /> Get Lesson
+                                        </a>
+                                    )}
                                 </div>
                             ))}
                         </div>
