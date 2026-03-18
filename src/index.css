@@ -52,15 +52,70 @@ body {
   z-index: 100;
 }
 
+.sidebar.collapsed {
+  width: 100px;
+  padding: 1.5rem 0.5rem;
+}
+
+.sidebar.collapsed .nav-link span {
+  display: none;
+}
+
+.sidebar.collapsed .nav-link {
+  justify-content: center;
+  padding: 1rem;
+}
+
+.sidebar.collapsed .brand {
+  justify-content: center;
+}
+
+.sidebar.collapsed .sidebar-collapse-btn {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .sidebar {
     position: fixed;
     height: 100vh;
     transform: translateX(-100%);
+    width: 280px;
+    box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
   }
 
   .sidebar.open {
     transform: translateX(0);
+  }
+
+  /* Keep sidebar full width on mobile even if collapsed state is somehow triggered */
+  .sidebar.collapsed {
+    width: 280px;
+  }
+}
+
+.sidebar-toggle {
+  display: none;
+}
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 90;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+
+.sidebar-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+  .sidebar-toggle {
+    display: flex;
   }
 }
 
@@ -120,6 +175,27 @@ body {
   flex-direction: column;
   overflow-y: auto;
   position: relative;
+  transition: all var(--transition);
+}
+
+@media (min-width: 769px) {
+  .sidebar-collapse-btn {
+    display: flex;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    transition: background-color var(--transition);
+    cursor: pointer;
+  }
+
+  .sidebar-collapse-btn:hover {
+    background-color: var(--surface-hover);
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar-collapse-btn {
+    display: none;
+  }
 }
 
 .topbar {
@@ -136,8 +212,11 @@ body {
 }
 
 .page-title {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .page-container {
@@ -154,6 +233,7 @@ body {
 
   .topbar {
     padding: 1rem;
+    gap: 0.5rem;
   }
 }
 
@@ -166,7 +246,7 @@ body {
 
 .grid-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }

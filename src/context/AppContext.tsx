@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { initialClasses, initialTeachers, initialStudents, initialAttendance, initialOfferings } from '../data/mockData';
 import type { Class, Teacher, Student, AttendanceRecord, ClassOffering } from '../data/mockData';
@@ -21,21 +21,65 @@ interface AppState {
     addStudent: (student: Omit<Student, 'id'>) => void;
     updateStudent: (id: string, student: Partial<Student>) => void;
     removeStudent: (id: string) => void;
-    addTeacher: (teacher: Omit<Teacher, 'id' | 'role' | 'classIds'>) => void;
+    addTeacher: (teacher: Omit<Teacher, 'id' | 'classIds'>) => void;
     updateTeacher: (id: string, teacher: Partial<Teacher>) => void;
     removeTeacher: (id: string) => void;
     updateExtraEmails: (emails: string[]) => void;
+    currentUser: Teacher | null;
+    setCurrentUser: (user: Teacher | null) => void;
+    churchName: string;
+    churchLogo: string;
+    updateChurchSettings: (name: string, logo: string) => void;
 }
 
 const AppContext = createContext<AppState | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [classes, setClasses] = useState<Class[]>(initialClasses);
-    const [teachers, setTeachers] = useState<Teacher[]>(initialTeachers);
-    const [students, setStudents] = useState<Student[]>(initialStudents);
-    const [attendance, setAttendance] = useState<AttendanceRecord[]>(initialAttendance);
-    const [offerings, setOfferings] = useState<ClassOffering[]>(initialOfferings);
-    const [extraEmails, setExtraEmails] = useState<string[]>(['pastor@philadelphie.org', 'clerk@philadelphie.org']);
+    const [classes, setClasses] = useState<Class[]>(() => {
+        const saved = localStorage.getItem('ss_classes');
+        return saved ? JSON.parse(saved) : initialClasses;
+    });
+    const [teachers, setTeachers] = useState<Teacher[]>(() => {
+        const saved = localStorage.getItem('ss_teachers');
+        return saved ? JSON.parse(saved) : initialTeachers;
+    });
+    const [students, setStudents] = useState<Student[]>(() => {
+        const saved = localStorage.getItem('ss_students');
+        return saved ? JSON.parse(saved) : initialStudents;
+    });
+    const [attendance, setAttendance] = useState<AttendanceRecord[]>(() => {
+        const saved = localStorage.getItem('ss_attendance');
+        return saved ? JSON.parse(saved) : initialAttendance;
+    });
+    const [offerings, setOfferings] = useState<ClassOffering[]>(() => {
+        const saved = localStorage.getItem('ss_offerings');
+        return saved ? JSON.parse(saved) : initialOfferings;
+    });
+    const [extraEmails, setExtraEmails] = useState<string[]>(() => {
+        const saved = localStorage.getItem('ss_emails');
+        return saved ? JSON.parse(saved) : ['pastor@philadelphie.org', 'clerk@philadelphie.org'];
+    });
+    const [currentUser, setCurrentUser] = useState<Teacher | null>(() => {
+        const saved = localStorage.getItem('ss_currentUser');
+        return saved ? JSON.parse(saved) : initialTeachers[0];
+    });
+    const [churchName, setChurchName] = useState(() => {
+        return localStorage.getItem('ss_churchName') || 'PHILADELPHIE SDA CHURCH';
+    });
+    const [churchLogo, setChurchLogo] = useState(() => {
+        return localStorage.getItem('ss_churchLogo') || '';
+    });
+
+    // Persistence Effects
+    useEffect(() => localStorage.setItem('ss_classes', JSON.stringify(classes)), [classes]);
+    useEffect(() => localStorage.setItem('ss_teachers', JSON.stringify(teachers)), [teachers]);
+    useEffect(() => localStorage.setItem('ss_students', JSON.stringify(students)), [students]);
+    useEffect(() => localStorage.setItem('ss_attendance', JSON.stringify(attendance)), [attendance]);
+    useEffect(() => localStorage.setItem('ss_offerings', JSON.stringify(offerings)), [offerings]);
+    useEffect(() => localStorage.setItem('ss_emails', JSON.stringify(extraEmails)), [extraEmails]);
+    useEffect(() => localStorage.setItem('ss_currentUser', JSON.stringify(currentUser)), [currentUser]);
+    useEffect(() => localStorage.setItem('ss_churchName', churchName), [churchName]);
+    useEffect(() => localStorage.setItem('ss_churchLogo', churchLogo), [churchLogo]);
 
     const addClass = (cls: Omit<Class, 'id'>) => {
         setClasses([...classes, { ...cls, id: uuidv4() }]);
@@ -114,11 +158,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }
     };
 
-    const addTeacher = (teacher: Omit<Teacher, 'id' | 'role' | 'classIds'>) => {
+    const addTeacher = (teacher: Omit<Teacher, 'id' | 'classIds'>) => {
         setTeachers([...teachers, {
             ...teacher,
             id: uuidv4(),
-            role: 'teacher',
             classIds: [],
             avatar: teacher.name.charAt(0).toUpperCase()
         }]);
@@ -138,12 +181,19 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setExtraEmails(emails);
     };
 
+    const updateChurchSettings = (name: string, logo: string) => {
+        setChurchName(name);
+        setChurchLogo(logo);
+    };
+
     return (
         <AppContext.Provider value={{
             classes, teachers, students, attendance, offerings, extraEmails,
             addClass, updateClass, removeClass, assignTeacher, unassignTeacher, recordAttendance, recordOffering,
             addStudent, updateStudent, removeStudent,
-            addTeacher, updateTeacher, removeTeacher, updateExtraEmails
+            addTeacher, updateTeacher, removeTeacher, updateExtraEmails,
+            currentUser, setCurrentUser,
+            churchName, churchLogo, updateChurchSettings
         }}>
             {children}
         </AppContext.Provider>

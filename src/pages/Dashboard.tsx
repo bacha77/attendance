@@ -4,12 +4,13 @@ import { Users, UserX, UserCheck, TrendingUp, BookOpen, Clock, Gift, MessageSqua
 import { useAppContext } from '../context/AppContext';
 
 const Dashboard: React.FC = () => {
-    const { classes, students, attendance, extraEmails, teachers } = useAppContext();
+    const { classes, students, attendance, extraEmails, teachers, currentUser } = useAppContext();
     const navigate = useNavigate();
-    const [selectedTeacherId, setSelectedTeacherId] = React.useState(teachers[0]?.id || '');
+    const [selectedTeacherId, setSelectedTeacherId] = React.useState('admin-01');
 
     // Get classes for the selected teacher
     const teacherClasses = React.useMemo(() => {
+        if (selectedTeacherId === 'admin-01') return classes;
         const teacher = teachers.find(t => t.id === selectedTeacherId);
         return classes.filter(c => teacher?.classIds.includes(c.id));
     }, [selectedTeacherId, teachers, classes]);
@@ -45,7 +46,7 @@ const Dashboard: React.FC = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
                     <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', background: 'linear-gradient(45deg, #f8fafc, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                        Welcome back, {teachers.find(t => t.id === selectedTeacherId)?.name || 'Organizer'}
+                        Welcome back, {currentUser?.name || teachers.find(t => t.id === selectedTeacherId)?.name || 'Organizer'}
                     </h2>
                     <p style={{ color: 'var(--text-muted)' }}>Here's what's happening at Sabbath School today.</p>
                 </div>
@@ -58,6 +59,7 @@ const Dashboard: React.FC = () => {
                         value={selectedTeacherId}
                         onChange={(e) => setSelectedTeacherId(e.target.value)}
                     >
+                        <option value="admin-01">Administrative View (All Classes)</option>
                         {teachers.map(t => (
                             <option key={t.id} value={t.id}>{t.name}</option>
                         ))}
@@ -111,7 +113,7 @@ const Dashboard: React.FC = () => {
                 </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
                 <div className="card interactive-card" onClick={() => navigate('/reports')}>
                     <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         <TrendingUp size={20} color="var(--primary-color)" /> Classes Overview

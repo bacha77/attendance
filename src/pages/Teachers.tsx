@@ -9,24 +9,27 @@ const Teachers: React.FC = () => {
     const [editingTeacherId, setEditingTeacherId] = useState<string | null>(null);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [role, setRole] = useState<'teacher' | 'admin'>('teacher');
 
     const handleAddTeacher = (e: React.FormEvent) => {
         e.preventDefault();
         if (editingTeacherId) {
-            updateTeacher(editingTeacherId, { name, email });
+            updateTeacher(editingTeacherId, { name, email, role });
         } else {
-            addTeacher({ name, email });
+            addTeacher({ name, email, role });
         }
         setIsModalOpen(false);
         setEditingTeacherId(null);
         setName('');
         setEmail('');
+        setRole('teacher');
     };
 
     const handleEditTeacher = (teacher: any) => {
         setEditingTeacherId(teacher.id);
         setName(teacher.name);
         setEmail(teacher.email);
+        setRole(teacher.role);
         setIsModalOpen(true);
     };
 
@@ -64,7 +67,12 @@ const Teachers: React.FC = () => {
                             <div style={{ flex: 1 }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                     <div>
-                                        <h3 style={{ fontSize: '1.125rem', fontWeight: 600 }}>{teacher.name}</h3>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                            <h3 style={{ fontSize: '1.125rem', fontWeight: 600 }}>{teacher.name}</h3>
+                                            <span className={`badge ${teacher.role === 'admin' ? 'badge-primary' : 'badge-secondary'}`} style={{ fontSize: '0.65rem', padding: '0.1rem 0.4rem', textTransform: 'uppercase' }}>
+                                                {teacher.role}
+                                            </span>
+                                        </div>
                                         <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{teacher.email}</p>
                                     </div>
                                     <div style={{ display: 'flex', gap: '0.25rem' }}>
@@ -143,6 +151,13 @@ const Teachers: React.FC = () => {
                             <div className="form-group">
                                 <label className="form-label">Email Address</label>
                                 <input type="email" className="form-control" value={email} onChange={e => setEmail(e.target.value)} required placeholder="teacher@example.com" />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">System Role</label>
+                                <select className="form-control" value={role} onChange={e => setRole(e.target.value as 'teacher' | 'admin')}>
+                                    <option value="teacher">Teacher</option>
+                                    <option value="admin">Admin / Organizer</option>
+                                </select>
                             </div>
                             <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
                                 <button type="button" className="btn btn-secondary" onClick={() => { setIsModalOpen(false); setEditingTeacherId(null); }} style={{ flex: 1 }}>Cancel</button>

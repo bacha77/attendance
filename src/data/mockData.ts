@@ -11,7 +11,7 @@ export interface User {
 }
 
 export interface Teacher extends User {
-  role: 'teacher';
+  role: UserRole;
   classIds: string[];
 }
 
@@ -68,6 +68,7 @@ export const initialClasses: Class[] = [
 ];
 
 export const initialTeachers: Teacher[] = [
+  { id: 'admin-01', name: 'Admin User', role: 'admin', email: 'admin@philadelphie.org', classIds: [], avatar: 'AD' },
   { id: 't1', name: 'Sarah Jenkins', role: 'teacher', email: 'sarah.j@example.com', classIds: ['c1', 'c2'], avatar: 'SJ' },
   { id: 't2', name: 'Michael Chen', role: 'teacher', email: 'michael.c@example.com', classIds: ['c3', 'c4'], avatar: 'MC' },
   { id: 't3', name: 'Emily Davis', role: 'teacher', email: 'emily.d@example.com', classIds: ['c5'], avatar: 'ED' },
