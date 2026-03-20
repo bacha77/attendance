@@ -83,7 +83,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         return saved ? JSON.parse(saved) : initialTeachers[0];
     });
     const [churchName, setChurchName] = useState(() => {
-        return localStorage.getItem('ss_churchName') || 'PHILADELPHIE SDA CHURCH';
+        const saved = localStorage.getItem('ss_churchName');
+        return (saved && saved !== 'PHILADELPHIE SDA CHURCH') ? saved : 'PHILADELPHIE SEVENTH DAY ADVENTIST CHURCH';
     });
     const [churchLogo, setChurchLogo] = useState(() => {
         return localStorage.getItem('ss_churchLogo') || '';

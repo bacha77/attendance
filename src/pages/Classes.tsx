@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useAppContext } from '../context/AppContext';
 import { Plus, Users, Settings, Search, Trash2, CheckSquare, DollarSign } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -245,7 +246,7 @@ const Classes: React.FC = () => {
             </div>
 
             {/* Class Modal */}
-            {isClassModalOpen && (
+            {isClassModalOpen && createPortal(
                 <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }}>
                     <div className="card animate-fade-in" style={{ width: '100%', maxWidth: '500px' }}>
                         <h2 style={{ marginBottom: '1.5rem', fontSize: '1.5rem' }}>{editingClassId ? 'Edit Class' : 'Create New Class'}</h2>
@@ -268,11 +269,12 @@ const Classes: React.FC = () => {
                             </div>
                         </form>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* Student Modal */}
-            {isStudentModalOpen && (
+            {isStudentModalOpen && createPortal(
                 <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }}>
                     <div className="card animate-fade-in" style={{ width: '100%', maxWidth: '500px' }}>
                         <h2 style={{ marginBottom: '1.5rem', fontSize: '1.5rem' }}>{editingStudentId ? 'Edit Student' : 'Enroll Student'}</h2>
@@ -340,7 +342,8 @@ const Classes: React.FC = () => {
                             </div>
                         </form>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </div>
     );

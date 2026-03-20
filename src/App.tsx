@@ -107,6 +107,14 @@ const App: React.FC = () => {
     return localStorage.getItem('ss_authenticated') === 'true';
   });
 
+  const currentLang = document.cookie.includes('/en/fr') ? 'fr' : 'en';
+
+  const switchLanguage = (lang: 'en' | 'fr') => {
+    document.cookie = `googtrans=/en/${lang}; path=/; domain=${window.location.hostname}`;
+    document.cookie = `googtrans=/en/${lang}; path=/`;
+    window.location.reload();
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setFadeSplash(true);
@@ -138,14 +146,17 @@ const App: React.FC = () => {
           />
 
           <aside className={`sidebar ${sidebarOpen ? 'open' : ''} ${sidebarCollapsed ? 'collapsed' : ''}`}>
-            <div className="brand" style={{ gap: '0.75rem', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', overflow: 'hidden' }}>
-                <img src={churchLogo || `${import.meta.env.BASE_URL}logo.png`} alt="Church Logo" style={{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'contain', flexShrink: 0 }} />
-                <div style={{ display: sidebarCollapsed ? 'none' : 'flex', flexDirection: 'column', lineHeight: '1.2' }}>
-                  <span style={{ color: 'white', fontSize: '0.9rem', fontWeight: 700, letterSpacing: '0.05em' }}>{churchName.split(' ')[0]}</span>
-                  <span style={{ color: 'var(--primary-color)', fontSize: '0.75rem', fontWeight: 600 }}>{churchName.split(' ').slice(1).join(' ')}</span>
+            <div style={{ display: sidebarCollapsed ? 'none' : 'block', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '1rem' }}>
+              Created By <span style={{ color: 'var(--primary-color)' }}>LOUIS DUMAY</span>
+            </div>
+            <div className="brand" style={{ gap: '0.75rem', justifyContent: 'space-between', marginTop: '-0.5rem' }}>
+              <NavLink to="/" onClick={() => setSidebarOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none' }}>
+                <img src={churchLogo || `${import.meta.env.BASE_URL}logo.png`} alt="Church Logo" style={{ width: '50px', height: '50px', borderRadius: '6px', objectFit: 'contain', flexShrink: 0 }} />
+                <div style={{ display: sidebarCollapsed ? 'none' : 'flex', flexDirection: 'column', lineHeight: '1.2', flex: 1 }}>
+                  <span style={{ color: 'white', fontSize: '0.85rem', fontWeight: 800, letterSpacing: '0.02em' }}>{churchName.split(' ')[0]}</span>
+                  <span style={{ color: 'var(--primary-color)', fontSize: '0.65rem', fontWeight: 700, lineHeight: '1.4' }}>{churchName.split(' ').slice(1).join(' ')}</span>
                 </div>
-              </div>
+              </NavLink>
               <button className="btn-icon sidebar-collapse-btn" onClick={toggleCollapse} style={{ background: 'none', border: 'none', color: 'var(--text-muted)' }}>
                 {sidebarCollapsed ? <ChevronRight size={20} /> : <Menu size={20} />}
               </button>
@@ -178,7 +189,7 @@ const App: React.FC = () => {
               </NavLink>
               <NavLink to="/offerings" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
                 <DollarSign size={20} />
-                Class Offerings
+                <span className="notranslate">{currentLang === 'fr' ? "L'offrande de l'École du Sabbat" : "Sabbath School Offerings"}</span>
               </NavLink>
               <NavLink to="/lessons" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
                 <Library size={20} />
@@ -211,8 +222,21 @@ const App: React.FC = () => {
                 <Menu size={24} />
               </button>
               <div className="page-title">Sabbath School System</div>
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <button className="btn btn-success" style={{ padding: '0.5rem', fontSize: '0.75rem' }} onClick={() => setProfileModalOpen(true)}>Active Account</button>
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <div style={{ display: 'flex', backgroundColor: 'var(--surface-hover)', borderRadius: 'var(--radius-sm)', padding: '2px', border: '1px solid var(--border-color)' }}>
+                  <button
+                    onClick={() => switchLanguage('en')}
+                    style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', fontWeight: 600, border: 'none', borderRadius: '4px', cursor: 'pointer', backgroundColor: currentLang === 'en' ? 'var(--primary-color)' : 'transparent', color: currentLang === 'en' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s' }}
+                  >EN</button>
+                  <button
+                    onClick={() => switchLanguage('fr')}
+                    style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', fontWeight: 600, border: 'none', borderRadius: '4px', cursor: 'pointer', backgroundColor: currentLang === 'fr' ? 'var(--primary-color)' : 'transparent', color: currentLang === 'fr' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s' }}
+                  >FR</button>
+                </div>
+                <button className="btn btn-success" style={{ padding: '0.5rem 0.875rem', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={() => setProfileModalOpen(true)}>
+                  <div className="status-dot"></div>
+                  <span>Active Account</span>
+                </button>
               </div>
             </header>
 

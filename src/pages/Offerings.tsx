@@ -64,7 +64,9 @@ const Offerings: React.FC = () => {
                         </button>
                     )}
                     <div>
-                        <h2 style={{ fontSize: '1.75rem', fontWeight: 600 }}>{classId ? `${activeClasses[0]?.name} Offering` : 'Class Offerings'}</h2>
+                        <h2 style={{ fontSize: '1.75rem', fontWeight: 600 }}>
+                            {classId ? `${activeClasses[0]?.name} Offering` : <span className="notranslate">{document.cookie.includes('/en/fr') ? "L'offrande de l'École du Sabbat" : "Sabbath School Offerings"}</span>}
+                        </h2>
                         <p style={{ color: 'var(--text-muted)' }}>{classId ? `Record money for the ${activeClasses[0]?.name} class.` : 'Collect and record money for each individual class.'}</p>
                     </div>
                 </div>

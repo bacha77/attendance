@@ -56,7 +56,7 @@ const AdminSettings: React.FC = () => {
                                 className="form-control"
                                 value={tempName}
                                 onChange={e => setTempName(e.target.value)}
-                                placeholder="E.g. Philadelphie SDA Church"
+                                placeholder="E.g. PHILADELPHIE SEVENTH DAY ADVENTIST CHURCH"
                             />
                         </div>
                         <div className="form-group">

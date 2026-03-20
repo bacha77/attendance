@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useAppContext } from '../context/AppContext';
 import { UserPlus, Search, BookOpen, Settings, Trash2 } from 'lucide-react';
 
@@ -139,7 +140,7 @@ const Teachers: React.FC = () => {
             </div>
 
             {/* Add Teacher Modal */}
-            {isModalOpen && (
+            {isModalOpen && createPortal(
                 <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }}>
                     <div className="card animate-fade-in" style={{ width: '100%', maxWidth: '400px' }}>
                         <h2 style={{ marginBottom: '1.5rem', fontSize: '1.5rem' }}>{editingTeacherId ? 'Edit Teacher' : 'Add New Teacher'}</h2>
@@ -165,7 +166,8 @@ const Teachers: React.FC = () => {
                             </div>
                         </form>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </div>
     );
