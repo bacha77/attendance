@@ -30,6 +30,7 @@ interface AppState {
     churchName: string;
     churchLogo: string;
     updateChurchSettings: (name: string, logo: string) => void;
+    clearAllData: () => void;
 }
 
 const AppContext = createContext<AppState | undefined>(undefined);
@@ -206,6 +207,25 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setChurchLogo(logo);
     };
 
+    const clearAllData = () => {
+        if (window.confirm('Are you sure you want to clear ALL data (Students, Teachers, Records)? Classes will also be removed. This cannot be undone.')) {
+            setClasses([]);
+            setStudents([]);
+            setTeachers(teachers.filter(t => t.role === 'admin')); // Keep admins
+            setAttendance([]);
+            setOfferings([]);
+            setExtraEmails([]);
+            localStorage.clear();
+            // To prevent initialClasses from reloading, we should ideally set empty markers in localStorage
+            localStorage.setItem('ss_classes', JSON.stringify([]));
+            localStorage.setItem('ss_teachers', JSON.stringify(teachers.filter(t => t.role === 'admin')));
+            localStorage.setItem('ss_students', JSON.stringify([]));
+            localStorage.setItem('ss_attendance', JSON.stringify([]));
+            localStorage.setItem('ss_offerings', JSON.stringify([]));
+            window.location.reload();
+        }
+    };
+
     return (
         <AppContext.Provider value={{
             classes, teachers, students, attendance, offerings, extraEmails,
@@ -213,7 +233,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             addStudent, updateStudent, removeStudent,
             addTeacher, updateTeacher, removeTeacher, updateExtraEmails,
             currentUser, setCurrentUser,
-            churchName, churchLogo, updateChurchSettings
+            churchName, churchLogo, updateChurchSettings, clearAllData
         }}>
             {children}
         </AppContext.Provider>

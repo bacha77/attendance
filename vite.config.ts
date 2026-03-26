@@ -38,4 +38,9 @@ export default defineConfig({
     })
   ],
   base: '/attendance/',
+  server: {
+    port: 5175,
+    strictPort: true,
+    host: true
+  }
 })

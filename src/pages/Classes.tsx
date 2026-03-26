@@ -232,8 +232,12 @@ const Classes: React.FC = () => {
                                                 <td>{s.birthdayMonth ? `${months[parseInt(s.birthdayMonth) - 1]} ${s.birthdayDay}` : '-'}</td>
                                                 <td style={{ textAlign: 'right' }}>
                                                     <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                                                        <button className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => handleEditStudent(s)}>Edit</button>
-                                                        <button className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', color: 'var(--danger-color)', borderColor: 'rgba(239, 68, 68, 0.2)' }} onClick={() => removeStudent(s.id)}>Remove</button>
+                                                        <button className="btn-icon" onClick={() => handleEditStudent(s)} title="Edit Student" style={{ width: '32px', height: '32px' }}>
+                                                            <Settings size={16} />
+                                                        </button>
+                                                        <button className="btn-icon" style={{ color: 'var(--danger-color)', width: '32px', height: '32px' }} onClick={() => removeStudent(s.id)} title="Delete Student">
+                                                            <Trash2 size={16} />
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>

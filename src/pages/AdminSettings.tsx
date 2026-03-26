@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
-import { Settings, Shield, Globe, Mail, Save, Image, CheckCircle, Bell } from 'lucide-react';
+import { Settings, Shield, Globe, Mail, Save, Image, CheckCircle, Bell, Trash2 } from 'lucide-react';
 
 const AdminSettings: React.FC = () => {
     const {
@@ -8,7 +8,8 @@ const AdminSettings: React.FC = () => {
         churchLogo,
         updateChurchSettings,
         extraEmails,
-        updateExtraEmails
+        updateExtraEmails,
+        clearAllData
     } = useAppContext();
 
     const [tempName, setTempName] = useState(churchName);
@@ -37,9 +38,17 @@ const AdminSettings: React.FC = () => {
 
     return (
         <div className="animate-fade-in">
-            <div style={{ marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: '1.75rem', fontWeight: 600 }}>System Administration</h2>
-                <p style={{ color: 'var(--text-muted)' }}>Central control for church configuration and reporting and and system-wide settings.</p>
+            <div style={{ marginBottom: '2.5rem' }}>
+                <h2 style={{ fontSize: '2.25rem', fontWeight: 800, color: 'white', letterSpacing: '-0.02em', marginBottom: '0.5rem' }}>
+                    System <span style={{ color: 'var(--primary-color)' }}>Administration</span>
+                </h2>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>Central control for church configuration and system-wide settings.</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.25rem 0.75rem', backgroundColor: 'rgba(16, 185, 129, 0.1)', borderRadius: '99px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+                        <div className="status-dot" style={{ width: '6px', height: '6px' }}></div>
+                        <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--success-color)', textTransform: 'uppercase' }}>Operational</span>
+                    </div>
+                </div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '2rem' }}>
@@ -132,35 +141,33 @@ const AdminSettings: React.FC = () => {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <div>
-                                <h4 style={{ fontSize: '0.9rem', color: 'white' }}>Multi-User Lockout</h4>
-                                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Prevent teachers from editing records after Sabbath ends.</p>
+                                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'white', marginBottom: '0.15rem' }}>Multi-User Lockout</h4>
+                                <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Prevent teachers from editing records after Sabbath ends.</p>
                             </div>
-                            <div style={{ width: '40px', height: '20px', backgroundColor: 'var(--primary-color)', borderRadius: '20px', position: 'relative' }}>
-                                <div style={{ width: '16px', height: '16px', backgroundColor: 'white', borderRadius: '50%', position: 'absolute', right: '2px', top: '2px' }}></div>
+                            <div style={{ width: '48px', height: '24px', backgroundColor: 'var(--primary-color)', borderRadius: '24px', position: 'relative', cursor: 'pointer', boxShadow: '0 0 10px var(--primary-glow)' }}>
+                                <div style={{ width: '18px', height: '18px', backgroundColor: 'white', borderRadius: '50%', position: 'absolute', right: '3px', top: '3px', transition: '0.3s' }}></div>
                             </div>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <div>
-                                <h4 style={{ fontSize: '0.9rem', color: 'white' }}>Automated Cloud Backups</h4>
-                                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Sync attendance data to safe-storage daily.</p>
+                                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'white', marginBottom: '0.15rem' }}>Automated Cloud Backups</h4>
+                                <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Sync attendance data to safe-storage daily.</p>
                             </div>
-                            <div style={{ width: '40px', height: '20px', backgroundColor: 'var(--surface-hover)', borderRadius: '20px', position: 'relative' }}>
-                                <div style={{ width: '16px', height: '16px', backgroundColor: '#94a3b8', borderRadius: '50%', position: 'absolute', left: '2px', top: '2px' }}></div>
+                            <div style={{ width: '48px', height: '24px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '24px', position: 'relative', cursor: 'pointer', border: '1px solid var(--border-color)' }}>
+                                <div style={{ width: '18px', height: '18px', backgroundColor: 'var(--text-dim)', borderRadius: '50%', position: 'absolute', left: '3px', top: '2px', transition: '0.3s' }}></div>
                             </div>
                         </div>
-                        <div style={{ marginTop: '1rem', borderTop: '1px solid var(--border-color)', paddingTop: '1rem' }}>
+                        <div style={{ marginTop: '1rem', borderTop: '1px solid var(--border-color)', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                             <button
-                                className="btn"
-                                style={{ width: '100%', backgroundColor: 'transparent', border: '1px solid var(--danger-color)', color: 'var(--danger-color)', fontSize: '0.8rem' }}
-                                onClick={() => {
-                                    if (window.confirm('WARNING: This will delete ALL attendance records, students, and teachers. This cannot be undone. Proceed?')) {
-                                        localStorage.clear();
-                                        window.location.reload();
-                                    }
-                                }}
+                                className="btn btn-primary"
+                                style={{ width: '100%', background: 'linear-gradient(135deg, #f43f5e, #e11d48)', border: 'none', display: 'flex', gap: '0.5rem', alignItems: 'center', justifyContent: 'center' }}
+                                onClick={() => clearAllData()}
                             >
-                                Reset System Data (Clear Local Storage)
+                                <Trash2 size={18} /> Clear Mock Data & Fresh Start
                             </button>
+                            <p style={{ fontSize: '0.7rem', color: 'var(--text-dim)', textAlign: 'center' }}>
+                                This will remove the demonstration students and teachers to let you enter your own records.
+                            </p>
                         </div>
                     </div>
                 </div>

@@ -145,59 +145,58 @@ const App: React.FC = () => {
             onClick={() => setSidebarOpen(false)}
           />
 
-          <aside className={`sidebar ${sidebarOpen ? 'open' : ''} ${sidebarCollapsed ? 'collapsed' : ''}`}>
-            <div style={{ display: sidebarCollapsed ? 'none' : 'block', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '1rem' }}>
-              Created By <span style={{ color: 'var(--primary-color)' }}>LOUIS DUMAY</span>
-            </div>
-            <div className="brand" style={{ gap: '0.75rem', justifyContent: 'space-between', marginTop: '-0.5rem' }}>
-              <NavLink to="/" onClick={() => setSidebarOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none' }}>
-                <img src={churchLogo || `${import.meta.env.BASE_URL}logo.png`} alt="Church Logo" style={{ width: '50px', height: '50px', borderRadius: '6px', objectFit: 'contain', flexShrink: 0 }} />
-                <div style={{ display: sidebarCollapsed ? 'none' : 'flex', flexDirection: 'column', lineHeight: '1.2', flex: 1 }}>
-                  <span style={{ color: 'white', fontSize: '0.85rem', fontWeight: 800, letterSpacing: '0.02em' }}>{churchName.split(' ')[0]}</span>
-                  <span style={{ color: 'var(--primary-color)', fontSize: '0.65rem', fontWeight: 700, lineHeight: '1.4' }}>{churchName.split(' ').slice(1).join(' ')}</span>
+            <aside className={`sidebar ${sidebarOpen ? 'open' : ''} ${sidebarCollapsed ? 'collapsed' : ''}`} style={{ background: 'linear-gradient(to bottom, #020617, #0f172a)' }}>
+            <div className="sidebar-header" style={{ marginBottom: '2.5rem', padding: '0 0.5rem' }}>
+              <div className="brand" style={{ display: 'flex', alignItems: 'center', gap: '1rem', textDecoration: 'none' }}>
+                <div className="brand-icon" style={{ flexShrink: 0, padding: '0.6rem', background: 'var(--grad-primary)', borderRadius: '14px', boxShadow: '0 10px 20px var(--primary-glow)' }}>
+                  <img src={churchLogo || `${import.meta.env.BASE_URL}logo.png`} alt="Logo" style={{ width: '38px', height: '38px', borderRadius: '8px', objectFit: 'contain' }} />
                 </div>
-              </NavLink>
-              <button className="btn-icon sidebar-collapse-btn" onClick={toggleCollapse} style={{ background: 'none', border: 'none', color: 'var(--text-muted)' }}>
-                {sidebarCollapsed ? <ChevronRight size={20} /> : <Menu size={20} />}
+                <div className="brand-text" style={{ display: sidebarCollapsed ? 'none' : 'flex', flexDirection: 'column', lineHeight: '1.1' }}>
+                  <span style={{ color: 'white', fontSize: '1.25rem', fontWeight: 900, letterSpacing: '-0.04em' }}>{churchName.split(' ')[0]}</span>
+                  <span style={{ color: 'var(--primary-color)', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', opacity: 0.8 }}>School System</span>
+                </div>
+              </div>
+              <button className="sidebar-collapse-btn" onClick={toggleCollapse} style={{ position: 'absolute', right: '-12px', top: '38px', width: '24px', height: '24px', backgroundColor: 'var(--primary-color)', borderRadius: '50%', color: 'white', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10, transition: 'var(--transition)', boxShadow: '0 0 15px var(--primary-glow)' }}>
+                <ChevronRight size={14} style={{ transform: sidebarCollapsed ? '' : 'rotate(180deg)' }} />
               </button>
             </div>
 
             <nav className="nav-links">
               <NavLink to="/" end className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
-                <LayoutDashboard size={20} />
+                <div className="nav-icon-container" style={{ color: 'var(--info-color)' }}><LayoutDashboard size={20} /></div>
                 Dashboard
               </NavLink>
               <NavLink to="/attendance" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
-                <UserCheck size={20} />
+                <div className="nav-icon-container" style={{ color: 'var(--success-color)' }}><UserCheck size={20} /></div>
                 Attendance Entry
               </NavLink>
               <NavLink to="/classes" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
-                <BookOpen size={20} />
+                <div className="nav-icon-container" style={{ color: 'var(--primary-color)' }}><BookOpen size={20} /></div>
                 Classes & Students
               </NavLink>
               <NavLink to="/teachers" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
-                <Users size={20} />
+                <div className="nav-icon-container" style={{ color: 'var(--secondary-color)' }}><Users size={20} /></div>
                 Teacher Assignment
               </NavLink>
               <NavLink to="/reports" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
-                <BarChart3 size={20} />
+                <div className="nav-icon-container" style={{ color: 'var(--accent-color)' }}><BarChart3 size={20} /></div>
                 Reports & Export
               </NavLink>
               <NavLink to="/messaging" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
-                <MessageSquare size={20} />
+                <div className="nav-icon-container" style={{ color: 'var(--warning-color)' }}><MessageSquare size={20} /></div>
                 Teachers Messaging
               </NavLink>
               <NavLink to="/offerings" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
-                <DollarSign size={20} />
-                <span className="notranslate">{currentLang === 'fr' ? "L'offrande de l'École du Sabbat" : "Sabbath School Offerings"}</span>
+                <div className="nav-icon-container" style={{ color: 'var(--success-color)' }}><DollarSign size={20} /></div>
+                <span className="notranslate">{currentLang === 'fr' ? "L'offrande" : "Offerings"}</span>
               </NavLink>
               <NavLink to="/lessons" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
-                <Library size={20} />
+                <div className="nav-icon-container" style={{ color: 'var(--primary-color)' }}><Library size={20} /></div>
                 Study Resources
               </NavLink>
               {currentUser?.role === 'admin' && (
                 <NavLink to="/admin" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)} style={{ borderTop: '1px solid var(--border-color)', marginTop: '0.5rem', paddingTop: '0.5rem' }}>
-                  <Settings size={20} />
+                  <div className="nav-icon-container" style={{ color: 'var(--text-dim)' }}><Settings size={20} /></div>
                   System Settings
                 </NavLink>
               )}
@@ -217,26 +216,33 @@ const App: React.FC = () => {
           </aside>
 
           <main className={`main-content ${sidebarCollapsed ? 'expanded' : ''}`}>
-            <header className="topbar">
-              <button className="btn-icon sidebar-toggle" onClick={toggleSidebar}>
-                <Menu size={24} />
+            <header className="topbar" style={{ padding: '0.875rem 2rem', gap: '1.5rem' }}>
+              <button className="sidebar-toggle" onClick={toggleSidebar}>
+                <Menu size={22} />
               </button>
-              <div className="page-title">Sabbath School System</div>
-              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                <div style={{ display: 'flex', backgroundColor: 'var(--surface-hover)', borderRadius: 'var(--radius-sm)', padding: '2px', border: '1px solid var(--border-color)' }}>
+              
+              <div className="page-title" style={{ color: 'white', letterSpacing: '-0.03em', fontSize: '1.5rem', fontWeight: 900 }}>Sabbath School <span style={{ color: 'var(--primary-color)' }}>Portal</span></div>
+              
+              <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', marginLeft: 'auto' }}>
+                <div style={{ display: 'flex', backgroundColor: 'rgba(15, 23, 42, 0.4)', borderRadius: 'var(--radius-sm)', padding: '3px', border: '1px solid var(--border-color)', backdropFilter: 'blur(8px)' }}>
                   <button
                     onClick={() => switchLanguage('en')}
-                    style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', fontWeight: 600, border: 'none', borderRadius: '4px', cursor: 'pointer', backgroundColor: currentLang === 'en' ? 'var(--primary-color)' : 'transparent', color: currentLang === 'en' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s' }}
+                    style={{ padding: '0.35rem 0.6rem', fontSize: '0.7rem', fontWeight: 700, border: 'none', borderRadius: '8px', cursor: 'pointer', backgroundColor: currentLang === 'en' ? 'var(--primary-color)' : 'transparent', color: currentLang === 'en' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s', boxShadow: currentLang === 'en' ? '0 4px 10px var(--primary-glow)' : 'none' }}
                   >EN</button>
                   <button
                     onClick={() => switchLanguage('fr')}
-                    style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', fontWeight: 600, border: 'none', borderRadius: '4px', cursor: 'pointer', backgroundColor: currentLang === 'fr' ? 'var(--primary-color)' : 'transparent', color: currentLang === 'fr' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s' }}
+                    style={{ padding: '0.35rem 0.6rem', fontSize: '0.7rem', fontWeight: 700, border: 'none', borderRadius: '8px', cursor: 'pointer', backgroundColor: currentLang === 'fr' ? 'var(--primary-color)' : 'transparent', color: currentLang === 'fr' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s', boxShadow: currentLang === 'fr' ? '0 4px 10px var(--primary-glow)' : 'none' }}
                   >FR</button>
                 </div>
-                <button className="btn btn-success" style={{ padding: '0.5rem 0.875rem', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={() => setProfileModalOpen(true)}>
+                
+                <div 
+                  className="interactive-card" 
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.4rem 0.75rem', backgroundColor: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '12px', cursor: 'pointer' }}
+                  onClick={() => setProfileModalOpen(true)}
+                >
                   <div className="status-dot"></div>
-                  <span>Active Account</span>
-                </button>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--success-color)', textTransform: 'uppercase', letterSpacing: '0.02em' }}>Online</span>
+                </div>
               </div>
             </header>
 
