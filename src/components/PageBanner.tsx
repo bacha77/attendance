@@ -4,7 +4,7 @@ import { ArrowLeft, type LucideIcon } from 'lucide-react';
 
 interface PageBannerProps {
     title: string;
-    subtitle?: string;
+    subtitle?: React.ReactNode;
     icon: LucideIcon;
     gradient?: string;
     showBack?: boolean;

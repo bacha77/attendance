@@ -6,7 +6,7 @@ import PageBanner from '../components/PageBanner';
 
 const HomeHub: React.FC = () => {
     const navigate = useNavigate();
-    const { currentUser, churchName, students } = useAppContext();
+    const { currentUser, churchName, students, isCloudSyncing } = useAppContext();
 
     const menuItems = [
         { title: 'Take Attendance', icon: UserCheck, color: 'var(--success-color)', path: '/attendance', desc: 'Record weekly student presence & study' },
@@ -25,7 +25,20 @@ const HomeHub: React.FC = () => {
         <div className="animate-fade-in" style={{ maxWidth: '1000px', margin: '0 auto', paddingBottom: '3rem' }}>
             <PageBanner 
                 title={`Welcome to ${churchName.split(' ')[0]}`}
-                subtitle={`Sabbath School Portal • Happy Sabbath, ${currentUser?.name || 'Teacher'}!`}
+                subtitle={
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <span>Sabbath School Portal • Happy Sabbath, {currentUser?.name || 'Teacher'}!</span>
+                        {isCloudSyncing ? (
+                            <span className="badge animate-pulse" style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '0.65rem', padding: '0.2rem 0.5rem', border: '1px solid rgba(255,255,255,0.2)' }}>
+                                ☁️ SYNCING...
+                            </span>
+                        ) : (
+                            <span className="badge" style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)', color: '#10b981', fontSize: '0.65rem', padding: '0.2rem 0.5rem', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+                                ● CLOUD ACTIVE
+                            </span>
+                        )}
+                    </div>
+                }
                 icon={BookOpen}
                 gradient="linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)"
             />

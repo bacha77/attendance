@@ -1,8 +1,9 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import { initialClasses, initialTeachers, initialStudents, initialAttendance, initialOfferings } from '../data/mockData';
 import type { Class, Teacher, Student, AttendanceRecord, ClassOffering } from '../data/mockData';
 import { v4 as uuidv4 } from 'uuid';
+import { supabase } from '../lib/supabase';
 
 interface AppState {
     classes: Class[];
@@ -31,121 +32,171 @@ interface AppState {
     churchLogo: string;
     updateChurchSettings: (name: string, logo: string) => void;
     clearAllData: () => void;
+    isCloudSyncing: boolean;
 }
 
 const AppContext = createContext<AppState | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    // Check if cloud is configured (not just placeholder)
+    const isCloudEnabled = Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY);
+    const [isCloudSyncing, setIsCloudSyncing] = useState(false);
+
     const [classes, setClasses] = useState<Class[]>(() => {
         const saved = localStorage.getItem('ss_classes');
         if (!saved) return initialClasses;
-        const parsed: Class[] = JSON.parse(saved);
-        // Auto-upgrade: Merge lessonLink from initialClasses if it's new or the old one needs updating
-        return parsed.map(c => {
-            const initial = initialClasses.find(ic => ic.id === c.id);
-            if (initial && initial.lessonLink) {
-                // If the link is missing OR if it's an adult class (c6-c9) using the old link, update it
-                if (!c.lessonLink || (c.id.startsWith('c6') || c.id.startsWith('c7') || c.id.startsWith('c8') || c.id.startsWith('c9'))) {
-                    return { ...c, lessonLink: initial.lessonLink };
-                }
-            }
-            return c;
-        });
+        return JSON.parse(saved);
     });
+    
     const [teachers, setTeachers] = useState<Teacher[]>(() => {
         const saved = localStorage.getItem('ss_teachers');
         if (!saved) return initialTeachers;
-        const parsed = JSON.parse(saved);
-        // Ensure initial teachers (like admin) have correct roles even if saved older version
-        return parsed.map((t: Teacher) => {
-            const initial = initialTeachers.find(it => it.id === t.id);
-            if (initial && initial.role !== t.role) return { ...t, role: initial.role };
-            return t;
-        });
+        return JSON.parse(saved);
     });
+
     const [students, setStudents] = useState<Student[]>(() => {
         const saved = localStorage.getItem('ss_students');
         return saved ? JSON.parse(saved) : initialStudents;
     });
+
     const [attendance, setAttendance] = useState<AttendanceRecord[]>(() => {
         const saved = localStorage.getItem('ss_attendance');
         return saved ? JSON.parse(saved) : initialAttendance;
     });
+
     const [offerings, setOfferings] = useState<ClassOffering[]>(() => {
         const saved = localStorage.getItem('ss_offerings');
         return saved ? JSON.parse(saved) : initialOfferings;
     });
+
     const [extraEmails, setExtraEmails] = useState<string[]>(() => {
         const saved = localStorage.getItem('ss_emails');
         return saved ? JSON.parse(saved) : ['pastor@philadelphie.org', 'clerk@philadelphie.org'];
     });
+
     const [currentUser, setCurrentUser] = useState<Teacher | null>(() => {
         const saved = localStorage.getItem('ss_currentUser');
         return saved ? JSON.parse(saved) : initialTeachers[0];
     });
+
     const [churchName, setChurchName] = useState(() => {
         const saved = localStorage.getItem('ss_churchName');
         return (saved && saved !== 'PHILADELPHIE SDA CHURCH') ? saved : 'PHILADELPHIE SEVENTH DAY ADVENTIST CHURCH';
     });
+
     const [churchLogo, setChurchLogo] = useState(() => {
         return localStorage.getItem('ss_churchLogo') || '';
     });
 
-    // Persistence Effects
-    useEffect(() => localStorage.setItem('ss_classes', JSON.stringify(classes)), [classes]);
-    useEffect(() => localStorage.setItem('ss_teachers', JSON.stringify(teachers)), [teachers]);
-    useEffect(() => localStorage.setItem('ss_students', JSON.stringify(students)), [students]);
-    useEffect(() => localStorage.setItem('ss_attendance', JSON.stringify(attendance)), [attendance]);
-    useEffect(() => localStorage.setItem('ss_offerings', JSON.stringify(offerings)), [offerings]);
-    useEffect(() => localStorage.setItem('ss_emails', JSON.stringify(extraEmails)), [extraEmails]);
-    useEffect(() => localStorage.setItem('ss_currentUser', JSON.stringify(currentUser)), [currentUser]);
-    useEffect(() => localStorage.setItem('ss_churchName', churchName), [churchName]);
-    useEffect(() => localStorage.setItem('ss_churchLogo', churchLogo), [churchLogo]);
+    // --- CLOUD SYNC LOGIC ---
 
-    const addClass = (cls: Omit<Class, 'id'>) => {
-        setClasses([...classes, { ...cls, id: uuidv4() }]);
-    };
+    const fetchAllData = useCallback(async () => {
+        if (!isCloudEnabled) return;
+        setIsCloudSyncing(true);
+        try {
+            const [
+                { data: cls },
+                { data: std },
+                { data: att },
+                { data: off }
+            ] = await Promise.all([
+                supabase.from('classes').select('*'),
+                supabase.from('students').select('*'),
+                supabase.from('attendance').select('*'),
+                supabase.from('offerings').select('*')
+            ]);
 
-    const updateClass = (id: string, updated: Partial<Class>) => {
-        setClasses(classes.map(c => c.id === id ? { ...c, ...updated } : c));
-    };
+            if (cls) setClasses(cls);
+            if (std) setStudents(std);
+            if (att) {
+                // Map DB names to CamelCase
+                const mappedAtt = att.map((a: any) => ({
+                    ...a,
+                    sevenDaysStudy: a.seven_days_study,
+                    recordedBy: a.recorded_by
+                }));
+                setAttendance(mappedAtt);
+            }
+            if (off) setOfferings(off);
+        } catch (error) {
+            console.error('Initial fetch failed:', error);
+        } finally {
+            setIsCloudSyncing(false);
+        }
+    }, [isCloudEnabled]);
 
-    const removeClass = (id: string) => {
-        if (window.confirm('Are you sure you want to delete this class? All students in this class will be unassigned.')) {
-            setClasses(classes.filter(c => c.id !== id));
-            setStudents(students.map(s => s.classId === id ? { ...s, classId: '' } : s));
+    // Initial load and Real-time Subscription
+    useEffect(() => {
+        if (!isCloudEnabled) return;
+        fetchAllData();
+
+        // Subscribe to changes
+        const studentSub = supabase
+            .channel('public:students')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'students' }, fetchAllData)
+            .subscribe();
+
+        const attSub = supabase
+            .channel('public:attendance')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'attendance' }, fetchAllData)
+            .subscribe();
+
+        const offSub = supabase
+            .channel('public:offerings')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'offerings' }, fetchAllData)
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(studentSub);
+            supabase.removeChannel(attSub);
+            supabase.removeChannel(offSub);
+        };
+    }, [isCloudEnabled, fetchAllData]);
+
+    // Save to LocalStorage
+    useEffect(() => { localStorage.setItem('ss_classes', JSON.stringify(classes)); }, [classes]);
+    useEffect(() => { localStorage.setItem('ss_teachers', JSON.stringify(teachers)); }, [teachers]);
+    useEffect(() => { localStorage.setItem('ss_students', JSON.stringify(students)); }, [students]);
+    useEffect(() => { localStorage.setItem('ss_attendance', JSON.stringify(attendance)); }, [attendance]);
+    useEffect(() => { localStorage.setItem('ss_offerings', JSON.stringify(offerings)); }, [offerings]);
+    useEffect(() => { localStorage.setItem('ss_emails', JSON.stringify(extraEmails)); }, [extraEmails]);
+    useEffect(() => { localStorage.setItem('ss_currentUser', JSON.stringify(currentUser)); }, [currentUser]);
+    useEffect(() => { localStorage.setItem('ss_churchName', churchName); }, [churchName]);
+    useEffect(() => { localStorage.setItem('ss_churchLogo', churchLogo); }, [churchLogo]);
+
+    // --- ACTIONS ---
+
+    const addClass = async (cls: Omit<Class, 'id'>) => {
+        const newClass = { ...cls, id: uuidv4() };
+        setClasses([...classes, newClass]);
+        if (isCloudEnabled) {
+            await supabase.from('classes').insert([newClass]);
         }
     };
 
-    const assignTeacher = (teacherId: string, classId: string) => {
-        setTeachers(teachers.map(t => {
-            if (t.id === teacherId) {
-                if (!t.classIds.includes(classId)) {
-                    return { ...t, classIds: [...t.classIds, classId] };
-                }
-            }
-            return t;
-        }));
+    const updateClass = async (id: string, updated: Partial<Class>) => {
+        setClasses(classes.map(c => c.id === id ? { ...c, ...updated } : c));
+        if (isCloudEnabled) {
+            await supabase.from('classes').update(updated).eq('id', id);
+        }
     };
 
-    const unassignTeacher = (teacherId: string, classId: string) => {
-        setTeachers(teachers.map(t => {
-            if (t.id === teacherId) {
-                return { ...t, classIds: t.classIds.filter(id => id !== classId) };
+    const removeClass = async (id: string) => {
+        if (window.confirm('Delete this class?')) {
+            setClasses(classes.filter(c => c.id !== id));
+            if (isCloudEnabled) {
+                await supabase.from('classes').delete().eq('id', id);
             }
-            return t;
-        }));
+        }
     };
 
-    const recordAttendance = (
+    const recordAttendance = async (
         classId: string,
         date: string,
         newRecords: { studentId: string, status: 'present' | 'absent', sevenDaysStudy: boolean }[],
         recordedBy: string
     ) => {
-        // Remove old records for this class on this date to replace
         const filtered = attendance.filter(a => !(a.classId === classId && a.date === date));
-
         const formattedRecords: AttendanceRecord[] = newRecords.map(r => ({
             id: uuidv4(),
             classId,
@@ -157,35 +208,81 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }));
 
         setAttendance([...filtered, ...formattedRecords]);
+
+        if (isCloudEnabled) {
+            // Delete old cloud records for this day/class
+            await supabase.from('attendance').delete().eq('class_id', classId).eq('date', date);
+            // Insert new ones
+            const dbRecords = formattedRecords.map(r => ({
+                id: r.id,
+                class_id: r.classId,
+                date: r.date,
+                student_id: r.studentId,
+                status: r.status,
+                seven_days_study: r.sevenDaysStudy,
+                recorded_by: r.recordedBy
+            }));
+            await supabase.from('attendance').insert(dbRecords);
+        }
     };
 
-    const recordOffering = (classId: string, date: string, amount: number) => {
+    const recordOffering = async (classId: string, date: string, amount: number) => {
+        const newOffering = { id: uuidv4(), classId, date, amount };
         const filtered = offerings.filter(o => !(o.classId === classId && o.date === date));
-        setOfferings([...filtered, { id: uuidv4(), classId, date, amount }]);
+        setOfferings([...filtered, newOffering]);
+
+        if (isCloudEnabled) {
+            await supabase.from('offerings').delete().eq('class_id', classId).eq('date', date);
+            await supabase.from('offerings').insert([{
+                id: newOffering.id,
+                class_id: newOffering.classId,
+                date: newOffering.date,
+                amount: newOffering.amount
+            }]);
+        }
     };
 
-    const addStudent = (student: Omit<Student, 'id'>) => {
-        setStudents([...students, { ...student, id: uuidv4() }]);
+    const addStudent = async (student: Omit<Student, 'id'>) => {
+        const newStudent = { ...student, id: uuidv4() };
+        setStudents([...students, newStudent]);
+        if (isCloudEnabled) {
+            const dbStudent = {
+                id: newStudent.id,
+                name: newStudent.name,
+                class_id: newStudent.classId,
+                parent_email: newStudent.parentEmail,
+                parent_phone: newStudent.parentPhone,
+                birthday_month: newStudent.birthdayMonth,
+                birthday_day: newStudent.birthdayDay,
+                avatar: newStudent.avatar
+            };
+            await supabase.from('students').insert([dbStudent]);
+        }
     };
 
-    const updateStudent = (id: string, updated: Partial<Student>) => {
+    const updateStudent = async (id: string, updated: Partial<Student>) => {
         setStudents(students.map(s => s.id === id ? { ...s, ...updated } : s));
+        if (isCloudEnabled) {
+            const dbUpdate: any = {};
+            if (updated.name) dbUpdate.name = updated.name;
+            if (updated.classId) dbUpdate.class_id = updated.classId;
+            if (updated.parentEmail) dbUpdate.parent_email = updated.parentEmail;
+            if (updated.parentPhone) dbUpdate.parent_phone = updated.parentPhone;
+            await supabase.from('students').update(dbUpdate).eq('id', id);
+        }
     };
 
-    const removeStudent = (id: string) => {
-        if (window.confirm('Are you sure you want to remove this student? All their attendance records will also be deleted.')) {
+    const removeStudent = async (id: string) => {
+        if (window.confirm('Remove this student?')) {
             setStudents(students.filter(s => s.id !== id));
-            setAttendance(attendance.filter(a => a.studentId !== id));
+            if (isCloudEnabled) {
+                await supabase.from('students').delete().eq('id', id);
+            }
         }
     };
 
     const addTeacher = (teacher: Omit<Teacher, 'id' | 'classIds'>) => {
-        setTeachers([...teachers, {
-            ...teacher,
-            id: uuidv4(),
-            classIds: [],
-            avatar: teacher.name.charAt(0).toUpperCase()
-        }]);
+        setTeachers([...teachers, { ...teacher, id: uuidv4(), classIds: [], avatar: teacher.name.charAt(0) }]);
     };
 
     const updateTeacher = (id: string, updated: Partial<Teacher>) => {
@@ -193,35 +290,32 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     };
 
     const removeTeacher = (id: string) => {
-        if (window.confirm('Are you sure you want to remove this teacher?')) {
+        if (window.confirm('Remove this teacher?')) {
             setTeachers(teachers.filter(t => t.id !== id));
         }
     };
 
-    const updateExtraEmails = (emails: string[]) => {
-        setExtraEmails(emails);
-    };
-
+    const updateExtraEmails = (emails: string[]) => setExtraEmails(emails);
+    
     const updateChurchSettings = (name: string, logo: string) => {
         setChurchName(name);
         setChurchLogo(logo);
     };
 
+    const assignTeacher = (teacherId: string, classId: string) => {
+        setTeachers(teachers.map(t => t.id === teacherId ? { ...t, classIds: [...t.classIds, classId] } : t));
+    };
+
+    const unassignTeacher = (teacherId: string, classId: string) => {
+        setTeachers(teachers.map(t => t.id === teacherId ? { ...t, classIds: t.classIds.filter(id => id !== classId) } : t));
+    };
+
     const clearAllData = () => {
-        if (window.confirm('Are you sure you want to clear ALL data (Students, Teachers, Records)? Classes will also be removed. This cannot be undone.')) {
-            setClasses([]);
+        if (window.confirm('Clear ALL data?')) {
             setStudents([]);
-            setTeachers(teachers.filter(t => t.role === 'admin')); // Keep admins
             setAttendance([]);
             setOfferings([]);
-            setExtraEmails([]);
             localStorage.clear();
-            // To prevent initialClasses from reloading, we should ideally set empty markers in localStorage
-            localStorage.setItem('ss_classes', JSON.stringify([]));
-            localStorage.setItem('ss_teachers', JSON.stringify(teachers.filter(t => t.role === 'admin')));
-            localStorage.setItem('ss_students', JSON.stringify([]));
-            localStorage.setItem('ss_attendance', JSON.stringify([]));
-            localStorage.setItem('ss_offerings', JSON.stringify([]));
             window.location.reload();
         }
     };
@@ -233,7 +327,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             addStudent, updateStudent, removeStudent,
             addTeacher, updateTeacher, removeTeacher, updateExtraEmails,
             currentUser, setCurrentUser,
-            churchName, churchLogo, updateChurchSettings, clearAllData
+            churchName, churchLogo, updateChurchSettings, clearAllData,
+            isCloudSyncing
         }}>
             {children}
         </AppContext.Provider>
