@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAppContext } from '../context/AppContext';
-import { Plus, Users, Settings, Search, Trash2, CheckSquare, DollarSign } from 'lucide-react';
+import { Plus, Users, Settings, Search, Trash2, CheckSquare, DollarSign, Users2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import PageBanner from '../components/PageBanner';
 
 const Classes: React.FC = () => {
     const { classes, students, addClass, updateClass, removeClass, addStudent, updateStudent, removeStudent } = useAppContext();
@@ -92,11 +93,14 @@ const Classes: React.FC = () => {
 
     return (
         <div className="animate-fade-in">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-                <div>
-                    <h2 style={{ fontSize: '1.75rem', fontWeight: 600 }}>Classes & Students</h2>
-                    <p style={{ color: 'var(--text-muted)' }}>Manage Sabbath School classes and enroll students.</p>
-                </div>
+            <PageBanner 
+                title="Class & Student Roster"
+                subtitle="Manage Sabbath School classes and enroll students."
+                icon={Users2}
+                gradient="linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)"
+            />
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
                 <div style={{ display: 'flex', gap: '1rem' }}>
                     <button className="btn btn-secondary" onClick={() => setStudentModalOpen(true)}>
                         <Plus size={18} /> Add Student

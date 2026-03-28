@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
-import { CheckCircle, XCircle, Clock, Calendar, Search, ArrowLeft, Users, UserPlus } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, Calendar, Search, Users, UserPlus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
+import PageBanner from '../components/PageBanner';
 
 const Attendance: React.FC = () => {
     const { classes, students, recordAttendance, addStudent } = useAppContext();
@@ -107,19 +108,13 @@ const Attendance: React.FC = () => {
 
     return (
         <div className="animate-fade-in">
-            <div style={{ marginBottom: '2.5rem', display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-                {classId && (
-                    <button className="btn-icon" onClick={() => navigate(-1)} style={{ width: '42px', height: '42px', backgroundColor: 'var(--surface-hover)', borderRadius: '12px', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
-                        <ArrowLeft size={20} />
-                    </button>
-                )}
-                <div>
-                    <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'white', letterSpacing: '-0.02em', marginBottom: '0.25rem' }}>
-                        {classId ? classes.find(c => c.id === selectedClassId)?.name : 'Attendance'} <span style={{ color: 'var(--primary-color)' }}>Entry</span>
-                    </h2>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>{classId ? `Logging attendance for ${classes.find(c => c.id === selectedClassId)?.name} class.` : "Select a class to begin logging Sabbath School attendance."}</p>
-                </div>
-            </div>
+            <PageBanner 
+                title={classId ? classes.find(c => c.id === selectedClassId)?.name || 'Attendance' : 'Sabbath Attendance'}
+                subtitle={classId ? `Logging registry for ${classes.find(c => c.id === selectedClassId)?.name}.` : "Select a class to begin logging Sabbath School attendance."}
+                icon={Users}
+                gradient="linear-gradient(135deg, #10b981 0%, #059669 100%)"
+                showBack={!!classId}
+            />
 
             {!classId && (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
