@@ -132,7 +132,7 @@ const App: React.FC = () => {
   const toggleCollapse = () => setSidebarCollapsed(!sidebarCollapsed);
 
   return (
-    <Router basename="/attendance">
+    <Router basename={window.location.hostname.includes('github.io') ? '/attendance' : ''}>
       {showSplash ? (
         <SplashScreen fade={fadeSplash} />
       ) : !isAuthenticated ? (
