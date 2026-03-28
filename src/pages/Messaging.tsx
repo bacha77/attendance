@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Send, Users, User, LayoutGrid, CheckCircle2 } from 'lucide-react';
+import { Send, Users, User, LayoutGrid, CheckCircle2, MessageSquare } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import PageBanner from '../components/PageBanner';
 
 const Messaging: React.FC = () => {
     const { classes, teachers } = useAppContext();
@@ -27,10 +28,12 @@ const Messaging: React.FC = () => {
 
     return (
         <div className="animate-fade-in">
-            <div style={{ marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: '1.75rem', fontWeight: 600 }}>Sabbath School Teachers Messaging</h2>
-                <p style={{ color: 'var(--text-muted)' }}>Send announcements, updates, and direct messages to Sabbath School Teachers.</p>
-            </div>
+            <PageBanner 
+                title="Teacher Messaging"
+                subtitle="Send announcements, updates, and direct messages to Sabbath School Teachers."
+                icon={MessageSquare}
+                gradient="linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)"
+            />
 
             <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) 2fr', gap: '2rem' }}>
                 <div className="card" style={{ alignSelf: 'start' }}>
@@ -64,7 +67,7 @@ const Messaging: React.FC = () => {
                         <div className="form-group animate-fade-in">
                             <label className="form-label">Select Class</label>
                             <select
-                                className="form-control"
+                                className="className=form-control"
                                 value={selectedTarget}
                                 onChange={e => setSelectedTarget(e.target.value)}
                                 style={{ appearance: 'none' }}

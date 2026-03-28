@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
-import { DollarSign, Calendar, Save, CheckCircle, ArrowLeft } from 'lucide-react';
+import { DollarSign, Calendar, Save, CheckCircle, ArrowLeft, Wallet } from 'lucide-react';
+import PageBanner from '../components/PageBanner';
 
 const Offerings: React.FC = () => {
     const { classes, recordOffering, offerings } = useAppContext();
@@ -56,21 +57,15 @@ const Offerings: React.FC = () => {
 
     return (
         <div className="animate-fade-in">
-            <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    {classId && (
-                        <button className="btn-icon" onClick={() => navigate(-1)} style={{ backgroundColor: 'var(--surface-hover)', borderRadius: '50%' }}>
-                            <ArrowLeft size={20} />
-                        </button>
-                    )}
-                    <div>
-                        <h2 style={{ fontSize: '1.75rem', fontWeight: 600 }}>
-                            {classId ? `${activeClasses[0]?.name} Offering` : <span className="notranslate">{document.cookie.includes('/en/fr') ? "L'offrande de l'École du Sabbat" : "Sabbath School Offerings"}</span>}
-                        </h2>
-                        <p style={{ color: 'var(--text-muted)' }}>{classId ? `Record money for the ${activeClasses[0]?.name} class.` : 'Collect and record money for each individual class.'}</p>
-                    </div>
-                </div>
+            <PageBanner 
+                title={classId ? `${activeClasses[0]?.name} Offering` : "Financial Stewardship"}
+                subtitle={classId ? `Record money for the ${activeClasses[0]?.name} class.` : "Collect and record weekly Sabbath School offerings for each class."}
+                icon={Wallet}
+                gradient="linear-gradient(135deg, #10b981 0%, #047857 100%)"
+                showBack={!!classId}
+            />
 
+            <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem' }}>
                 <div className="card" style={{ padding: '0.75rem 1rem', display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: 0 }}>
                     <label style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                         <Calendar size={16} /> Sabbath Date:

@@ -1,18 +1,19 @@
 import React from 'react';
 import { useAppContext } from '../context/AppContext';
-import { BookOpen, ExternalLink, Info, Globe } from 'lucide-react';
+import { BookOpen, ExternalLink, Info, Globe, Library } from 'lucide-react';
+import PageBanner from '../components/PageBanner';
 
 const Lessons: React.FC = () => {
     const { classes } = useAppContext();
 
     return (
         <div className="animate-fade-in">
-            <div style={{ marginBottom: '3rem' }}>
-                <h2 style={{ fontSize: '3rem', fontWeight: 900, color: 'white', letterSpacing: '-0.04em', lineHeight: '1', marginBottom: '1rem' }}>
-                    Study <span style={{ color: 'var(--primary-color)' }}>Resources</span>
-                </h2>
-                <p style={{ color: 'var(--text-dim)', fontSize: '1.1rem', maxWidth: '600px' }}>Access the "Alive in Jesus" study materials for all age groups through our integrated learning portal.</p>
-            </div>
+            <PageBanner 
+                title="Study Resources"
+                subtitle="Access the 'Alive in Jesus' study materials for all age groups through our integrated learning portal."
+                icon={Library}
+                gradient="linear-gradient(135deg, #ec4899 0%, #db2777 100%)"
+            />
 
             <div style={{ backgroundColor: 'rgba(99, 102, 241, 0.08)', border: '1px solid rgba(99, 102, 241, 0.15)', padding: '1.5rem', borderRadius: 'var(--radius-md)', marginBottom: '2.5rem', display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
                 <div style={{ padding: '0.75rem', backgroundColor: 'var(--primary-glow)', borderRadius: '12px', color: 'var(--primary-color)' }}>
@@ -58,6 +59,7 @@ const Lessons: React.FC = () => {
                                 rel="noopener noreferrer"
                                 className="btn"
                                 style={{ 
+                                    padding: '1rem',
                                     display: 'flex', 
                                     alignItems: 'center', 
                                     justifyContent: 'center', 
@@ -66,7 +68,8 @@ const Lessons: React.FC = () => {
                                     background: `linear-gradient(135deg, ${accentColor}, ${accentColor}dd)`,
                                     color: 'white',
                                     fontWeight: 700,
-                                    boxShadow: `0 10px 20px ${accentColor}30`
+                                    boxShadow: `0 10px 20px ${accentColor}30`,
+                                    borderRadius: 'var(--radius-md)'
                                 }}
                             >
                                 Open Weekly Lesson <ExternalLink size={16} />
