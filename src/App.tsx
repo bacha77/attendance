@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
+import HomeHub from './pages/HomeHub';
 import Classes from './pages/Classes';
 import Teachers from './pages/Teachers';
 import Attendance from './pages/Attendance';
@@ -10,7 +11,7 @@ import Offerings from './pages/Offerings';
 import AdminSettings from './pages/AdminSettings';
 import Lessons from './pages/Lessons';
 import { useAppContext } from './context/AppContext';
-import { LayoutDashboard, Users, BookOpen, UserCheck, BarChart3, MessageSquare, Menu, DollarSign, Settings, ChevronRight, Library } from 'lucide-react';
+import { Users, BookOpen, UserCheck, BarChart3, MessageSquare, Menu, DollarSign, Settings, ChevronRight, Library } from 'lucide-react';
 
 const SplashScreen: React.FC<{ fade: boolean }> = ({ fade }) => {
   const { churchName, churchLogo } = useAppContext();
@@ -163,16 +164,20 @@ const App: React.FC = () => {
 
             <nav className="nav-links">
               <NavLink to="/" end className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
-                <div className="nav-icon-container" style={{ color: 'var(--info-color)' }}><LayoutDashboard size={20} /></div>
-                Dashboard
+                <div className="nav-icon-container" style={{ color: 'var(--primary-color)' }}><Library size={20} /></div>
+                Main Menu
               </NavLink>
               <NavLink to="/attendance" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
                 <div className="nav-icon-container" style={{ color: 'var(--success-color)' }}><UserCheck size={20} /></div>
                 Attendance Entry
               </NavLink>
               <NavLink to="/classes" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
-                <div className="nav-icon-container" style={{ color: 'var(--primary-color)' }}><BookOpen size={20} /></div>
-                Classes & Students
+                <div className="nav-icon-container" style={{ color: 'var(--primary-color)' }}><Users size={20} /></div>
+                Students Roster
+              </NavLink>
+              <NavLink to="/admin-dashboard" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
+                <div className="nav-icon-container" style={{ color: 'var(--accent-color)' }}><BarChart3 size={20} /></div>
+                System Insights
               </NavLink>
               <NavLink to="/teachers" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setSidebarOpen(false)}>
                 <div className="nav-icon-container" style={{ color: 'var(--secondary-color)' }}><Users size={20} /></div>
@@ -217,11 +222,11 @@ const App: React.FC = () => {
 
           <main className={`main-content ${sidebarCollapsed ? 'expanded' : ''}`}>
             <header className="topbar" style={{ padding: '0.875rem 2rem', gap: '1.5rem' }}>
-              <button className="sidebar-toggle" onClick={toggleSidebar}>
-                <Menu size={22} />
+              <button className="sidebar-toggle" onClick={toggleSidebar} style={{ width: '50px', height: '50px', backgroundColor: 'var(--primary-color)', borderRadius: '14px', border: 'none', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px var(--primary-glow)' }}>
+                <Menu size={28} />
               </button>
               
-              <div className="page-title" style={{ color: 'white', letterSpacing: '-0.03em', fontSize: '1.5rem', fontWeight: 900 }}>Sabbath School <span style={{ color: 'var(--primary-color)' }}>Portal</span></div>
+              <div className="page-title" style={{ color: 'white', letterSpacing: '-0.03em', fontSize: '1.75rem', fontWeight: 900 }}>Sabbath School <span style={{ color: 'var(--primary-color)' }}>Portal</span></div>
               
               <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', marginLeft: 'auto' }}>
                 <div style={{ display: 'flex', backgroundColor: 'rgba(15, 23, 42, 0.4)', borderRadius: 'var(--radius-sm)', padding: '3px', border: '1px solid var(--border-color)', backdropFilter: 'blur(8px)' }}>
@@ -248,7 +253,8 @@ const App: React.FC = () => {
 
             <div className="page-container animate-fade-in">
               <Routes>
-                <Route path="/" element={<Dashboard />} />
+                <Route path="/" element={<HomeHub />} />
+                <Route path="/admin-dashboard" element={<Dashboard />} />
                 <Route path="/classes" element={<Classes />} />
                 <Route path="/teachers" element={<Teachers />} />
                 <Route path="/attendance" element={<Attendance />} />

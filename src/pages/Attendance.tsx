@@ -1,11 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
-import { CheckCircle, XCircle, Clock, Calendar, Search, ArrowLeft, Users } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, Calendar, Search, ArrowLeft, Users, UserPlus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 
 const Attendance: React.FC = () => {
-    const { classes, students, recordAttendance } = useAppContext();
+    const { classes, students, recordAttendance, addStudent } = useAppContext();
 
     const { classId } = useParams<{ classId: string }>();
     const navigate = useNavigate();
@@ -27,6 +28,9 @@ const Attendance: React.FC = () => {
 
     const [attendanceState, setAttendanceState] = useState<{ [key: string]: { status: 'present' | 'absent', sevenDaysStudy: boolean } }>({});
     const [searchTerm, setSearchTerm] = useState('');
+
+    const [isQuickEnrollOpen, setIsQuickEnrollOpen] = useState(false);
+    const [quickName, setQuickName] = useState('');
 
     const classStudents = useMemo(() => {
         return students.filter(s => s.classId === selectedClassId)
@@ -82,7 +86,23 @@ const Attendance: React.FC = () => {
             sevenDaysStudy: attendanceState[studentId].sevenDaysStudy
         }));
         recordAttendance(selectedClassId, date, records, 'admin');
-        alert('Attendance saved successfully!');
+        alert('Attendance saved and session closed successfully!');
+        navigate('/');
+    };
+
+    const handleQuickEnroll = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!quickName.trim()) return;
+        
+        addStudent({
+            name: quickName,
+            classId: selectedClassId,
+            avatar: quickName.charAt(0).toUpperCase()
+        });
+        
+        setIsQuickEnrollOpen(false);
+        setQuickName('');
+        alert(`${quickName} has been enrolled!`);
     };
 
     return (
@@ -188,13 +208,16 @@ const Attendance: React.FC = () => {
                                 type="text"
                                 className="form-control"
                                 placeholder="Search student..."
-                                style={{ paddingLeft: '2rem', width: '200px', padding: '0.5rem' }}
+                                style={{ paddingLeft: '2.5rem', width: '200px', padding: '0.65rem' }}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        <button className="btn btn-secondary" onClick={() => markAll('present')} style={{ padding: '0.5rem 1rem' }}>Mark All Present</button>
-                        <button className="btn btn-secondary" onClick={() => markAll('absent')} style={{ padding: '0.5rem 1rem' }}>Mark All Absent</button>
+                        <button className="btn btn-secondary" onClick={() => setIsQuickEnrollOpen(true)} style={{ padding: '0.65rem 1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary-color)', backgroundColor: 'var(--primary-glow)' }}>
+                            <UserPlus size={18} /> Quick Enroll
+                        </button>
+                        <button className="btn btn-secondary" onClick={() => markAll('present')} style={{ padding: '0.65rem 1rem' }}>Mark All Present</button>
+                        <button className="btn btn-secondary" onClick={() => markAll('absent')} style={{ padding: '0.65rem 1rem' }}>Mark All Absent</button>
                     </div>
                 </div>
 
@@ -253,11 +276,47 @@ const Attendance: React.FC = () => {
                 )}
 
                 <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end' }}>
-                    <button className="btn btn-primary" onClick={handleSave} style={{ padding: '0.75rem 2rem', fontSize: '1rem', fontWeight: 600 }}>
-                        Submit Attendance
+                    <button className="btn btn-primary" onClick={handleSave} style={{ padding: '1rem 3rem', fontSize: '1.1rem', fontWeight: 800, borderRadius: '16px', boxShadow: '0 10px 30px var(--primary-glow)' }}>
+                        Finalize & Close Session
                     </button>
                 </div>
             </div>
+
+            {/* Quick Enroll Modal */}
+            {isQuickEnrollOpen && createPortal(
+                <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
+                    <div className="card animate-fade-in" style={{ width: '100%', maxWidth: '450px', padding: '2rem' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+                            <div style={{ padding: '1rem', backgroundColor: 'var(--primary-glow)', borderRadius: '50%', width: '64px', height: '64px', margin: '0 auto 1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary-color)' }}>
+                                <UserPlus size={32} />
+                            </div>
+                            <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>Quick Student Enroll</h2>
+                            <p style={{ color: 'var(--text-muted)' }}>Instantly add a new student to your class.</p>
+                        </div>
+                        
+                        <form onSubmit={handleQuickEnroll}>
+                            <div className="form-group">
+                                <label className="form-label" style={{ fontWeight: 700 }}>Student Full Name</label>
+                                <input 
+                                    type="text" 
+                                    className="form-control" 
+                                    value={quickName} 
+                                    onChange={e => setQuickName(e.target.value)}
+                                    autoFocus
+                                    placeholder="Enter student name..."
+                                    style={{ padding: '1rem', fontSize: '1.1rem' }}
+                                />
+                            </div>
+                            
+                            <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem' }}>
+                                <button type="button" className="btn btn-secondary" onClick={() => setIsQuickEnrollOpen(false)} style={{ flex: 1, padding: '1rem' }}>Cancel</button>
+                                <button type="submit" className="btn btn-primary" style={{ flex: 1, padding: '1rem', fontWeight: 800 }}>Enroll Student</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>,
+                document.body
+            )}
         </div>
     );
 };
