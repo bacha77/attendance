@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { FileText, FileSpreadsheet, Award, Send } from 'lucide-react';
+import { FileText, FileSpreadsheet, Award, Send, BarChart3 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import PageBanner from '../components/PageBanner';
 
 const Reports: React.FC = () => {
     const { classes, students, attendance, offerings, extraEmails, updateExtraEmails } = useAppContext();
@@ -133,11 +134,14 @@ const Reports: React.FC = () => {
 
     return (
         <div className="animate-fade-in">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-                <div>
-                    <h2 style={{ fontSize: '1.75rem', fontWeight: 600 }}>Customizable Reporting</h2>
-                    <p style={{ color: 'var(--text-muted)' }}>View and export in-depth attendance data.</p>
-                </div>
+            <PageBanner 
+                title="System Intelligence"
+                subtitle="Analyze Sabbath School attendance trends and export official records."
+                icon={BarChart3}
+                gradient="linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"
+            />
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
                 <div style={{ display: 'flex', gap: '1rem' }}>
                     <button className="btn btn-secondary" onClick={handleExportPDF}>
                         <FileText size={18} /> Export PDF

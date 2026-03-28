@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+
 
 export type UserRole = 'admin' | 'teacher' | 'parent';
 
@@ -54,7 +54,7 @@ export interface ClassOffering {
 }
 
 
-// 9 Default Classes
+// 10 Standard Sabbath School Classes as placeholders
 export const initialClasses: Class[] = [
   { id: 'c1', name: 'Beginner', ageGroup: '1-3 years old', room: 'Room 101', lessonLink: 'https://beginner.aliveinjesus.info/' },
   { id: 'c2', name: 'Kindergarten', ageGroup: '4-6 years old', room: 'Room 102', lessonLink: 'https://kindergarten.aliveinjesus.info/students' },
@@ -69,67 +69,12 @@ export const initialClasses: Class[] = [
 ];
 
 export const initialTeachers: Teacher[] = [
-  { id: 'admin-01', name: 'Admin User', role: 'admin', email: 'admin@philadelphie.org', classIds: [], avatar: 'AD' },
-  { id: 't1', name: 'Sarah Jenkins', role: 'teacher', email: 'sarah.j@example.com', classIds: ['c1', 'c2'], avatar: 'SJ' },
-  { id: 't2', name: 'Michael Chen', role: 'teacher', email: 'michael.c@example.com', classIds: ['c3', 'c4'], avatar: 'MC' },
-  { id: 't3', name: 'Emily Davis', role: 'teacher', email: 'emily.d@example.com', classIds: ['c5'], avatar: 'ED' },
-  { id: 't4', name: 'David Wilson', role: 'teacher', email: 'david.w@example.com', classIds: ['c6'], avatar: 'DW' },
-  { id: 't5', name: 'Rachel Brown', role: 'teacher', email: 'rachel.b@example.com', classIds: ['c7'], avatar: 'RB' },
-  { id: 't6', name: 'James Taylor', role: 'teacher', email: 'james.t@example.com', classIds: ['c8', 'c9'], avatar: 'JT' },
+  { id: 'admin-01', name: 'Superintendent', role: 'admin', email: 'admin@philadelphie.org', classIds: [], avatar: 'S' },
 ];
 
-export const generateMockStudents = (): Student[] => {
-  const students: Student[] = [];
-  initialClasses.forEach(cls => {
-    // 5 students per class
-    for (let i = 1; i <= 5; i++) {
-      students.push({
-        id: uuidv4(),
-        classId: cls.id,
-        name: `Student ${i} (${cls.name})`,
-        parentEmail: cls.ageGroup === 'Adults' ? undefined : `parent${i}@example.com`,
-        parentPhone: cls.ageGroup === 'Adults' ? undefined : `555-010${i}`,
-        email: cls.ageGroup === 'Adults' ? `student${i}@example.com` : undefined,
-        phone: cls.ageGroup === 'Adults' ? `555-020${i}` : undefined,
-        birthdayMonth: Math.floor(Math.random() * 12 + 1).toString(),
-        birthdayDay: Math.floor(Math.random() * 28 + 1).toString(),
-        avatar: `S${i}`
-      });
-    }
-  });
-  return students;
-};
+export const initialStudents: Student[] = [];
 
-export const initialStudents = generateMockStudents();
-
-export const generateMockAttendance = (students: Student[]): AttendanceRecord[] => {
-  const records: AttendanceRecord[] = [];
-  const today = new Date();
-
-  // Last 4 Sabbaths
-  for (let i = 0; i < 4; i++) {
-    const d = new Date(today);
-    d.setDate(d.getDate() - (i * 7 + (d.getDay() + 1) % 7)); // Get last Sabbaths
-    const dateStr = d.toISOString().split('T')[0];
-
-    students.forEach(student => {
-      // 85% present rate
-      const isPresent = Math.random() > 0.15;
-      records.push({
-        id: uuidv4(),
-        classId: student.classId,
-        studentId: student.id,
-        date: dateStr,
-        status: isPresent ? 'present' : 'absent',
-        sevenDaysStudy: isPresent ? Math.random() > 0.5 : false,
-        recordedBy: 'system'
-      });
-    });
-  }
-  return records;
-};
-
-export const initialAttendance = generateMockAttendance(initialStudents);
+export const initialAttendance: AttendanceRecord[] = [];
 
 export const initialOfferings: ClassOffering[] = [];
 

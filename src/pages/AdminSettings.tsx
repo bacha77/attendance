@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { Settings, Shield, Globe, Mail, Save, Image, CheckCircle, Bell, Trash2 } from 'lucide-react';
+import PageBanner from '../components/PageBanner';
 
 const AdminSettings: React.FC = () => {
     const {
@@ -38,18 +39,12 @@ const AdminSettings: React.FC = () => {
 
     return (
         <div className="animate-fade-in">
-            <div style={{ marginBottom: '2.5rem' }}>
-                <h2 style={{ fontSize: '2.25rem', fontWeight: 800, color: 'white', letterSpacing: '-0.02em', marginBottom: '0.5rem' }}>
-                    System <span style={{ color: 'var(--primary-color)' }}>Administration</span>
-                </h2>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>Central control for church configuration and system-wide settings.</p>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.25rem 0.75rem', backgroundColor: 'rgba(16, 185, 129, 0.1)', borderRadius: '99px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-                        <div className="status-dot" style={{ width: '6px', height: '6px' }}></div>
-                        <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--success-color)', textTransform: 'uppercase' }}>Operational</span>
-                    </div>
-                </div>
-            </div>
+            <PageBanner 
+                title="Admin Console"
+                subtitle="Configure church facility details, report distribution, and system-wide maintenance."
+                icon={Settings}
+                gradient="linear-gradient(135deg, #475569 0%, #1e293b 100%)"
+            />
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '2rem' }}>
                 {/* Global Identity */}
