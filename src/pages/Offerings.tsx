@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
-import { DollarSign, Calendar, Save, CheckCircle, ArrowLeft, Wallet } from 'lucide-react';
+import { DollarSign, Calendar, Save, CheckCircle, Wallet } from 'lucide-react';
 import PageBanner from '../components/PageBanner';
 
 const Offerings: React.FC = () => {
     const { classes, recordOffering, offerings } = useAppContext();
     const { classId } = useParams<{ classId: string }>();
-    const navigate = useNavigate();
     const [date, setDate] = useState(() => {
         const d = new Date();
         const day = d.getDay();

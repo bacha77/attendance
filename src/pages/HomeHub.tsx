@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserCheck, Users, BookOpen, BarChart3, Library, UserPlus, MessageSquare, Cake, DollarSign, Calendar } from 'lucide-react';
+import { UserCheck, Users, BookOpen, BarChart3, Library, UserPlus, MessageSquare, Cake, DollarSign } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import PageBanner from '../components/PageBanner';
 
